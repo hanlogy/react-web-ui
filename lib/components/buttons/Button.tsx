@@ -48,7 +48,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'inline-flex cursor-pointer items-center rounded-full transition-colors',
+        'inline-flex cursor-pointer items-center rounded-full transition-colors focus:outline-none',
         buttonClassNameMap[size],
         className,
         {
@@ -58,10 +58,7 @@ export function Button({
       )}
     >
       {icon && (
-        <IconWrapper
-          size={leadingIconSizeMap[size]}
-          className="mr-1 flex-none"
-        >
+        <IconWrapper size={leadingIconSizeMap[size]} className="mr-1 flex-none">
           {icon}
         </IconWrapper>
       )}

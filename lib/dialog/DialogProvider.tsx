@@ -18,9 +18,13 @@ export function DialogProvider({ children }: PropsWithChildren) {
   const resolverRef = useRef<((value: unknown) => void) | null>(null);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setShowOverlay(!!dialog);
     }, 10);
+
+    return () => {
+      clearTimeout(timer);
+    };
   }, [dialog]);
 
   const closeDialog = useCallback(<T,>(value: T | undefined = undefined) => {
@@ -62,6 +66,9 @@ export function DialogProvider({ children }: PropsWithChildren) {
       {children}
       {dialog && (
         <div
+          role="dialog"
+          aria-modal="true"
+          tabIndex={-1}
           className={clsx(
             'fixed inset-0 z-120 flex items-center justify-center transition-colors duration-200 ease-out',
             'pl-[calc(env(safe-area-inset-left)+1rem)]',
