@@ -5,6 +5,7 @@ import './index.css';
 import { Layout } from './layout';
 import HomePage from './pages/home/HomePage';
 import { IconsPage } from './pages/icons/IconsPage';
+import { ButtonsPage } from './pages/buttons/ButtonsPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
         <Route element={<Layout />}>
           <Route index element={<HomePage />} />
           <Route path="/icons" element={<IconsPage />} />
+          <Route path="/buttons" element={<ButtonsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

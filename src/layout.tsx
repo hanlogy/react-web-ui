@@ -3,6 +3,7 @@ import { Link, Outlet } from 'react-router';
 const pages = [
   { path: '/', label: 'Home' },
   { path: '/icons', label: 'Icons' },
+  { path: '/buttons', label: 'Buttons' },
 ] as const;
 
 export function Layout() {
