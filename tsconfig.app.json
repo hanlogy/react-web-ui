@@ -22,7 +22,11 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@hanlogy/react-ui": ["lib/index.ts"]
+    }
   },
-  "include": ["src"]
+  "include": ["src", "lib"]
 }
