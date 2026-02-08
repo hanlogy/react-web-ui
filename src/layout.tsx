@@ -5,6 +5,7 @@ const pages = [
   { path: '/icons', label: 'Icons' },
   { path: '/buttons', label: 'Buttons' },
   { path: '/collapsible-tree', label: 'Collapsible Tree' },
+  { path: '/dropdowns', label: 'Dropdowns' },
 ] as const;
 
 export function Layout() {
