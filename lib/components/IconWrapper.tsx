@@ -11,7 +11,7 @@ const iconClassNameMap: Record<IconSize, string> = {
   xlarge: 'w-10 h-10 text-4xl',
 };
 
-export function IconContainer({
+export function IconWrapper({
   children,
   size = 'medium',
   className,

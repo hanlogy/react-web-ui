@@ -1,4 +1,4 @@
-import { CollapsibleTree, IconContainer, SvgIcon } from '@hanlogy/react-ui';
+import { CollapsibleTree, IconWrapper, SvgIcon } from '@hanlogy/react-ui';
 
 export interface Item {
   name: string;
@@ -44,17 +44,17 @@ export function CollapsibleTreePage() {
               {(item.children?.length ?? 0) > 0 && (
                 <span>
                   {isCollapsed ? (
-                    <IconContainer>
+                    <IconWrapper>
                       <SvgIcon viewBox="0 -960 960 960">
                         <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
                       </SvgIcon>
-                    </IconContainer>
+                    </IconWrapper>
                   ) : (
-                    <IconContainer>
+                    <IconWrapper>
                       <SvgIcon viewBox="0 -960 960 960">
                         <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
                       </SvgIcon>
-                    </IconContainer>
+                    </IconWrapper>
                   )}
                 </span>
               )}

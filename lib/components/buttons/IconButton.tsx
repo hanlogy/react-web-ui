@@ -1,4 +1,4 @@
-import { IconContainer } from '../IconContainer';
+import { IconWrapper } from '../IconWrapper';
 import { clsx } from '../../helpers/clsx';
 import { Button } from './Button';
 import type { IconButtonProps } from './types';
@@ -47,7 +47,7 @@ export function IconButton({
       removeSpace={true}
       size={size}
     >
-      <IconContainer size={iconSizeMap[size]}>{children}</IconContainer>
+      <IconWrapper size={iconSizeMap[size]}>{children}</IconWrapper>
     </Button>
   );
 }

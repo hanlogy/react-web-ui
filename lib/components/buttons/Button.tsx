@@ -1,5 +1,5 @@
 import { clsx } from '../../helpers/clsx';
-import { IconContainer, type IconSize } from '../IconContainer';
+import { IconWrapper, type IconSize } from '../IconWrapper';
 import type { ButtonProps, ButtonSize } from './types';
 
 // Small buttons need bigger target area.
@@ -58,12 +58,12 @@ export function Button({
       )}
     >
       {icon && (
-        <IconContainer
+        <IconWrapper
           size={leadingIconSizeMap[size]}
           className="mr-1 flex-none"
         >
           {icon}
-        </IconContainer>
+        </IconWrapper>
       )}
       {children}
     </button>
