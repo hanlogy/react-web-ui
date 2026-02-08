@@ -6,6 +6,7 @@ import { Layout } from './layout';
 import HomePage from './pages/home/HomePage';
 import { IconsPage } from './pages/icons/IconsPage';
 import { ButtonsPage } from './pages/buttons/ButtonsPage';
+import { CollapsibleTreePage } from './pages/collapsible-tree/CollapsibleTreePage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -15,6 +16,7 @@ createRoot(document.getElementById('root')!).render(
           <Route index element={<HomePage />} />
           <Route path="/icons" element={<IconsPage />} />
           <Route path="/buttons" element={<ButtonsPage />} />
+          <Route path="/collapsible-tree" element={<CollapsibleTreePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -4,6 +4,7 @@ const pages = [
   { path: '/', label: 'Home' },
   { path: '/icons', label: 'Icons' },
   { path: '/buttons', label: 'Buttons' },
+  { path: '/collapsible-tree', label: 'Collapsible Tree' },
 ] as const;
 
 export function Layout() {
