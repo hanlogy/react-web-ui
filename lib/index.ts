@@ -13,6 +13,7 @@ export {
 export { CollapsibleTree } from './components/CollapsibleTree';
 export { ButtonGroup } from './components/buttons/ButtonGroup';
 export { clsx } from './helpers/clsx';
+
 // buttons
 export { Button } from './components/buttons/Button';
 export { IconButton } from './components/buttons/IconButton';
@@ -21,3 +22,11 @@ export type {
   ButtonSize,
   ButtonType,
 } from './components/buttons/types';
+
+// dialog
+export { DialogProvider } from './dialog/DialogProvider';
+export { useDialog } from './dialog/hooks';
+export { Dialog } from './dialog/Dialog';
+export { DialogTopbar } from './dialog/DialogTopbar';
+export { DialogActionBar } from './dialog/DialogActionBar';
+export type { CloseDialogFn } from './dialog/types';
