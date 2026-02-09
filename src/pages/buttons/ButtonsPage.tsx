@@ -4,7 +4,7 @@ import {
   clsx,
   IconButton,
   SvgIcon,
-} from '@hanlogy/react-ui';
+} from '@hanlogy/react-web-ui';
 
 const buttonGroupItems = [
   { value: 'yesterday', label: 'Yesterday' },

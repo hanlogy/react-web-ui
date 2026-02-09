@@ -3,7 +3,7 @@ import {
   Dropdown,
   DropdownMenu,
   type DropdownButtonBuilder,
-} from '@hanlogy/react-ui';
+} from '@hanlogy/react-web-ui';
 
 export function DropdownsPage() {
   const buttonBuilder: DropdownButtonBuilder = ({ show, isShown }) => (

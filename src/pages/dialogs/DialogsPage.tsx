@@ -5,7 +5,7 @@ import {
   DialogTopbar,
   useDialog,
   type CloseDialogFn,
-} from '@hanlogy/react-ui';
+} from '@hanlogy/react-web-ui';
 
 export function DialogsPage() {
   return (

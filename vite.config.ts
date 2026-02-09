@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@hanlogy/react-ui': resolve(__dirname, './lib/index.ts'),
+      '@hanlogy/react-web-ui': resolve(__dirname, './lib/index.ts'),
     },
   },
   build: {

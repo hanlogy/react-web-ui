@@ -1,4 +1,4 @@
-import { FlexCenter } from '@hanlogy/react-ui';
+import { FlexCenter } from '@hanlogy/react-web-ui';
 
 export default function HomePage() {
   return (

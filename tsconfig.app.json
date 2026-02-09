@@ -25,7 +25,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@hanlogy/react-ui": ["lib/index.ts"]
+      "@hanlogy/react-web-ui": ["lib/index.ts"],
+      "@hanlogy/react-web-ui/*": ["lib/*"]
     }
   },
   "include": ["src", "lib"]

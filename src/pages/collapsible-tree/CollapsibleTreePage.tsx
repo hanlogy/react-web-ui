@@ -1,4 +1,4 @@
-import { CollapsibleTree, IconWrapper, SvgIcon } from '@hanlogy/react-ui';
+import { CollapsibleTree, IconWrapper, SvgIcon } from '@hanlogy/react-web-ui';
 
 export interface Item {
   name: string;

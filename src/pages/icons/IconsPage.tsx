@@ -1,4 +1,4 @@
-import { IconWrapper, SvgIcon } from '@hanlogy/react-ui';
+import { IconWrapper, SvgIcon } from '@hanlogy/react-web-ui';
 
 export function IconsPage() {
   return (
