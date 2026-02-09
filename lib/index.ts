@@ -28,7 +28,7 @@ export type {
 // dialog
 export { DialogProvider } from './dialog/DialogProvider';
 export { useDialog } from './dialog/hooks';
-export { Dialog } from './dialog/Dialog';
+export { DialogScaffold } from './dialog/DialogScaffold';
 export { DialogTopbar } from './dialog/DialogTopbar';
 export { DialogActionBar } from './dialog/DialogActionBar';
 export type { CloseDialogFn } from './dialog/types';
