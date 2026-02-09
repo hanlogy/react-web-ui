@@ -1,4 +1,5 @@
-import { CollapsibleTree, IconWrapper, SvgIcon } from '@hanlogy/react-web-ui';
+import { CollapsibleTree, IconWrapper } from '@hanlogy/react-web-ui';
+import { ChevronDown, ChevronRight } from '../../components/icons';
 
 export interface Item {
   name: string;
@@ -45,15 +46,11 @@ export function CollapsibleTreePage() {
                 <span>
                   {isCollapsed ? (
                     <IconWrapper>
-                      <SvgIcon viewBox="0 -960 960 960">
-                        <path d="M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z" />
-                      </SvgIcon>
+                      <ChevronRight />
                     </IconWrapper>
                   ) : (
                     <IconWrapper>
-                      <SvgIcon viewBox="0 -960 960 960">
-                        <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
-                      </SvgIcon>
+                      <ChevronDown />
                     </IconWrapper>
                   )}
                 </span>

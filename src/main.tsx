@@ -9,6 +9,7 @@ import { ButtonsPage } from './pages/buttons/ButtonsPage';
 import { CollapsibleTreePage } from './pages/collapsible-tree/CollapsibleTreePage';
 import { DropdownsPage } from './pages/dropdowns/DropdownsPage';
 import { DialogsPage } from './pages/dialogs/DialogsPage';
+import { InputsPage } from './pages/inputs/InputsPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -21,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/collapsible-tree" element={<CollapsibleTreePage />} />
           <Route path="/dropdowns" element={<DropdownsPage />} />
           <Route path="/dialogs" element={<DialogsPage />} />
+          <Route path="/inputs" element={<InputsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

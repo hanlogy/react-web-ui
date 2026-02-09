@@ -33,3 +33,14 @@ export { DialogScaffold } from './dialog/DialogScaffold';
 export { DialogTopbar } from './dialog/DialogTopbar';
 export { DialogActionBar } from './dialog/DialogActionBar';
 export type { CloseDialogFn } from './dialog/types';
+
+// inputs
+export {
+  InputError,
+  InputHelper,
+  InputLabel,
+} from './components/inputs/elements';
+export { TextInput } from './components/inputs/TextInput';
+export { MultilineTextInput } from './components/inputs/MultilineTextInput';
+export { CheckboxInput } from './components/inputs/CheckboxInput';
+export { SelectInput } from './components/inputs/SelectInput';
