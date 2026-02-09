@@ -5,7 +5,7 @@
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "jest"],
     "skipLibCheck": true,
 
     /* Bundler mode */
@@ -29,5 +29,5 @@
       "@hanlogy/react-web-ui/*": ["lib/*"]
     }
   },
-  "include": ["src", "lib"]
+  "include": ["src", "lib", "__test__"]
 }

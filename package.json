@@ -3,6 +3,11 @@
   "private": false,
   "version": "1.0.0",
   "type": "module",
+  "author": "hanlogy.com",
+  "license": "AGPL-3.0 license",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "files": [
     "dist"
   ],
@@ -18,7 +23,8 @@
     "build": "vite build && tsc -p tsconfig.lib.json",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "test": "jest"
   },
   "peerDependencies": {
     "react": ">=18.2.0",
@@ -31,6 +37,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@tailwindcss/vite": "^4.1.18",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",
@@ -39,10 +46,12 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
+    "jest": "^30.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.13.0",
     "tailwindcss": "^4.1.18",
+    "ts-jest": "^29.4.6",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4"

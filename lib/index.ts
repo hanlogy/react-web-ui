@@ -1,4 +1,5 @@
 export { clsx } from './helpers/clsx';
+export { checkClassNamesAllowed } from './helpers/checkClassNamesAllowed';
 
 export { IconWrapper, type IconSize } from './components/IconWrapper';
 export { SvgIcon } from './components/SvgIcon';
