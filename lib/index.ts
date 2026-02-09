@@ -1,3 +1,5 @@
+export { clsx } from './helpers/clsx';
+
 export { IconWrapper, type IconSize } from './components/IconWrapper';
 export { SvgIcon } from './components/SvgIcon';
 export { FlexCenter, InlineFlexCenter } from './components/centers';
@@ -12,7 +14,7 @@ export {
 } from './components/DropdownMenu';
 export { CollapsibleTree } from './components/CollapsibleTree';
 export { ButtonGroup } from './components/buttons/ButtonGroup';
-export { clsx } from './helpers/clsx';
+export { SafeArea } from './components/SafeArea';
 
 // buttons
 export { Button } from './components/buttons/Button';
