@@ -1,7 +1,7 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 import { clsx } from '../helpers/clsx';
 
-export function Dialog({
+export function DialogScaffold({
   children,
   className,
   topbar,

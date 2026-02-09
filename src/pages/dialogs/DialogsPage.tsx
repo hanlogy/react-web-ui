@@ -1,5 +1,5 @@
 import {
-  Dialog,
+  DialogScaffold,
   DialogActionBar,
   DialogProvider,
   DialogTopbar,
@@ -36,7 +36,7 @@ function DialogPageView() {
 
 function InfoDialog({ closeDialog }: { closeDialog: CloseDialogFn }) {
   return (
-    <Dialog
+    <DialogScaffold
       topbar={
         <DialogTopbar className="text-gray-600 font-medium text-2xl">
           Lorem Ipsum
@@ -60,6 +60,6 @@ function InfoDialog({ closeDialog }: { closeDialog: CloseDialogFn }) {
         with desktop publishing software like Aldus PageMaker including versions
         of Lorem Ipsum.
       </div>
-    </Dialog>
+    </DialogScaffold>
   );
 }
