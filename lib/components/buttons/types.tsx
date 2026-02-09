@@ -9,6 +9,8 @@ export interface ButtonProps {
   readonly type?: ButtonType;
   readonly size?: ButtonSize;
   readonly disabled?: boolean;
+  readonly isRounded?: boolean;
+  readonly isInline?: boolean;
   readonly className?: string;
   readonly isCenter?: boolean;
   readonly icon?: ReactNode;

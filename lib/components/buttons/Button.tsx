@@ -39,23 +39,29 @@ export function Button({
   size = 'small',
   disabled = false,
   className,
-  onClick,
   isCenter = true,
+  isInline = true,
+  isRounded = true,
+  // Do not destructure onClick and attach DOM event explicitly, otherwise we
+  // need to have "use client".
+  ...rest
 }: ButtonProps) {
   return (
     <button
       type={type}
-      onClick={onClick}
       disabled={disabled}
       className={clsx(
-        'inline-flex cursor-pointer items-center rounded-full transition-colors focus:outline-none',
+        'cursor-pointer items-center transition-colors focus:outline-none',
         buttonClassNameMap[size],
         className,
+        isInline ? 'inline-flex' : 'flex',
         {
+          'rounded-full': isRounded,
           [buttonSpaceMap[size]]: !removeSpace,
           'justify-center': isCenter,
         },
       )}
+      {...rest}
     >
       {icon && (
         <IconWrapper size={leadingIconSizeMap[size]} className="mr-1 flex-none">
