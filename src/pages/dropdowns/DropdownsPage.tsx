@@ -26,7 +26,7 @@ export function DropdownsPage() {
     },
     {
       name: 'two',
-      label: 'Menu item 2',
+      label: 'Menu item two',
     },
   ] as const;
 
@@ -43,13 +43,13 @@ export function DropdownsPage() {
       </div>
       <h2>Dropdown Menu</h2>
       <DropdownMenu
-        className="bg-white rounded-lg shadow-lg border border-gray-200"
+        className="bg-white rounded-lg shadow-lg border border-gray-200 p-1"
         options={menuItems}
         buttonBuilder={buttonBuilder}
         itemBuilder={({ item, close }) => {
           return (
             <button
-              className="cursor-pointer hover:bg-gray-200 px-5 py-2"
+              className="cursor-pointer hover:bg-gray-200 px-5 py-2 w-full text-left rounded-sm"
               onClick={() => close()}
             >
               {item.label}

@@ -8,9 +8,9 @@ import {
   type PropsWithChildren,
   type ReactNode,
 } from 'react';
-import { clsx } from '../helpers/clsx';
 import { DialogContext } from './DialogContext';
 import type { DiaglogReturnType, DialogContentBuilder } from './types';
+import { DialogBackdrop } from './DialogBackdrop';
 
 export function DialogProvider({ children }: PropsWithChildren) {
   const [dialog, setDialog] = useState<ReactNode | null>(null);
@@ -65,24 +65,11 @@ export function DialogProvider({ children }: PropsWithChildren) {
     <DialogContext value={{ openDialog }}>
       {children}
       {dialog && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          tabIndex={-1}
-          className={clsx(
-            'fixed inset-0 z-120 flex items-center justify-center transition-colors duration-200 ease-out',
-            'pl-[calc(env(safe-area-inset-left)+1rem)]',
-            'pt-[calc(env(safe-area-inset-top)+1rem)]',
-            'pr-[calc(env(safe-area-inset-right)+1rem)]',
-            'pb-[calc(env(safe-area-inset-bottom)+1rem)]',
-            showOverlay ? 'bg-black/60' : 'bg-black/0',
-          )}
-          onClick={() => closeDialog()}
-        >
+        <DialogBackdrop showOverlay={showOverlay} onClick={() => closeDialog()}>
           <div onClick={(e) => e.stopPropagation()} className="contents">
             {dialog}
           </div>
-        </div>
+        </DialogBackdrop>
       )}
     </DialogContext>
   );

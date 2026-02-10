@@ -4,7 +4,7 @@ import {
   IconWrapper,
   useForm,
 } from '@hanlogy/react-web-ui';
-import { CheckboxField, TextareaField, SelectField, TextField } from './inputs';
+import { CheckboxField, TextareaField, SelectField, TextField } from './formFields';
 import { CloseIcon, PersonIcon } from '../../components/icons';
 import { useState } from 'react';
 

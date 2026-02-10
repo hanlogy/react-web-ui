@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useRef, type SubmitEvent } from 'react';
 import type {
   FormFieldRegisterOptions,

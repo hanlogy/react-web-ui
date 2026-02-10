@@ -2,7 +2,6 @@
 
 import type { Key, ReactNode } from 'react';
 import { Dropdown, type DropdownProps } from './Dropdown';
-import { clsx } from '../helpers/clsx';
 
 export type DropdownMenuItemBuilder<TOption> = (opts: {
   item: TOption;
@@ -29,7 +28,7 @@ export function DropdownMenu<TOption>({
   return (
     <Dropdown alignment={alignment} buttonBuilder={buttonBuilder}>
       {(close) => (
-        <div className={clsx('flex flex-col items-start p-1', className)}>
+        <div className={className}>
           {options.map((item) => {
             return (
               <div key={keyBuilder(item)}>{itemBuilder({ item, close })}</div>

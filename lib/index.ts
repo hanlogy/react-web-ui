@@ -28,6 +28,7 @@ export type {
 
 // dialog
 export { DialogProvider } from './dialog/DialogProvider';
+export { DialogBackdrop } from './dialog/DialogBackdrop';
 export { useDialog } from './dialog/hooks';
 export { DialogScaffold } from './dialog/DialogScaffold';
 export { DialogTopbar } from './dialog/DialogTopbar';
@@ -46,7 +47,12 @@ export { CheckboxInput } from './components/inputs/CheckboxInput';
 export { SelectInput } from './components/inputs/SelectInput';
 
 // form
-export { useForm } from './form/useForm';
+export {
+  useForm,
+  type FormFieldController,
+  type FormFieldRegister,
+  type FormSetFieldValue,
+} from './form/useForm';
 export { createTextField } from './form/createTextField';
 export { createTextareaField } from './form/createTextareaField';
 export { createCheckboxField } from './form/createCheckboxField';

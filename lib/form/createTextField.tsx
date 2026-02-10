@@ -1,3 +1,5 @@
+// TODO: We might create a HOC or a similar factory for select, text, textarea.
+
 import type { ReactNode } from 'react';
 import { TextInput } from '../components/inputs/TextInput';
 import type { FormFieldController } from './useForm';
