@@ -14,7 +14,7 @@ export function createCheckboxField({
   labelClass,
   helperClass,
   errorClass,
-}: Omit<FormElementsClassNameBuilders, 'inputClass'>) {
+}: Omit<FormElementsClassNameBuilders, 'inputClass'> = {}) {
   return <FormDataT extends object, FieldNameT extends StringKeyOf<FormDataT>>({
     controller: { ref, setValue, name, setErrorListener },
     label,
@@ -33,7 +33,7 @@ export function createCheckboxField({
     }, [setErrorListener]);
 
     return (
-      <>
+      <div>
         <CheckboxInput
           {...{
             ref,
@@ -68,7 +68,7 @@ export function createCheckboxField({
             </InputError>
           </div>
         )}
-      </>
+      </div>
     );
   };
 }

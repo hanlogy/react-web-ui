@@ -38,7 +38,7 @@ export function FormTextInputWrapper({
   }, [setErrorListener]);
 
   return (
-    <>
+    <div>
       {label && (
         <InputLabel className={resolveFieldStateClass(labelClass, { isError })}>
           {label}
@@ -62,6 +62,6 @@ export function FormTextInputWrapper({
           {error}
         </InputError>
       )}
-    </>
+    </div>
   );
 }

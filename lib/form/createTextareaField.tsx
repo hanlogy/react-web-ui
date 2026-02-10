@@ -14,7 +14,7 @@ export function createTextareaField({
   labelClass,
   helperClass,
   errorClass,
-}: FormElementsClassNameBuilders) {
+}: FormElementsClassNameBuilders = {}) {
   return <FormDataT extends object, FieldNameT extends StringKeyOf<FormDataT>>({
     controller: { ref, setValue, name, setErrorListener },
     label,
