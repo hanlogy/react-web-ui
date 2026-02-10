@@ -1,6 +1,7 @@
 import type { PropsWithChildren, ReactNode } from 'react';
 import { clsx } from '../helpers/clsx';
 
+// https://m3.material.io/components/dialogs/specs
 export function DialogScaffold({
   children,
   className,
@@ -19,7 +20,7 @@ export function DialogScaffold({
       )}
     >
       {topbar}
-      <div className={clsx('flex-1 overflow-auto')}>{children}</div>
+      <div className={clsx('flex-1 px-6 overflow-auto')}>{children}</div>
       {bottomBar}
     </div>
   );

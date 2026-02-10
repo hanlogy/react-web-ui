@@ -47,9 +47,9 @@ function InfoDialog({ closeDialog }: { closeDialog: CloseDialogFn }) {
           <button onClick={() => closeDialog()}>Close</button>
         </DialogActionBar>
       }
-      className="rounded-[1.75rem] bg-white py-6 shadow-lg max-w-md"
+      className="rounded-[1.75rem] bg-gray-200 shadow-white/40 shadow-lg max-w-md"
     >
-      <div className="px-6 text-gray-600">
+      <div className="text-gray-600">
         Lorem Ipsum is simply dummy text of the printing and typesetting
         industry. Lorem Ipsum has been the industry's standard dummy text ever
         since the 1500s, when an unknown printer took a galley of type and
