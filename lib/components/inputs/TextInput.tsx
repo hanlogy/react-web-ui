@@ -1,18 +1,14 @@
-import type { ComponentProps, ReactNode } from 'react';
-
 import { clsx } from '../../helpers/clsx';
 import { FlexCenter } from '../centers';
 import { hasRingClass } from './helpers';
+import type { TextInputProps } from './types';
 
 export function TextInput({
   className,
   prefix,
   suffix,
   ...rest
-}: Omit<ComponentProps<'input'>, 'prefix'> & {
-  prefix?: ReactNode;
-  suffix?: ReactNode;
-}) {
+}: TextInputProps) {
   const iconCommon = 'absolute top-2 h-10 w-10';
 
   return (

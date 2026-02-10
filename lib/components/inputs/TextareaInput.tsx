@@ -1,11 +1,11 @@
-import type { ComponentProps } from 'react';
 import { clsx } from '../../helpers/clsx';
 import { hasRingClass } from './helpers';
+import type { TextareaInputProps } from './types';
 
-export function MultilineTextInput({
+export function TextareaInput({
   className,
   ...rest
-}: ComponentProps<'textarea'>) {
+}: TextareaInputProps) {
   return (
     <textarea
       className={clsx(

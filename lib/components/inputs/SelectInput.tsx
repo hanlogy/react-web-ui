@@ -1,18 +1,15 @@
-import type { ComponentProps, ReactNode } from 'react';
-
 import { clsx } from '../../helpers/clsx';
 import { FlexCenter } from '../centers';
 import { hasRingClass } from './helpers';
 import { SvgIcon } from '../SvgIcon';
+import type { SelectInputProps } from './types';
 
 export function SelectInput({
   className,
   icon,
-  children,
+  options,
   ...rest
-}: ComponentProps<'select'> & {
-  icon?: ReactNode | undefined;
-}) {
+}: SelectInputProps) {
   return (
     <div className="relative">
       <select
@@ -21,7 +18,11 @@ export function SelectInput({
         })}
         {...rest}
       >
-        {children}
+        {options.map(({ label, value }) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
       </select>
       <FlexCenter className="absolute top-2 h-10 w-10 right-1 pointer-events-none">
         {icon ?? (

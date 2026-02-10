@@ -4,7 +4,7 @@ import {
   InputHelper,
   IconWrapper,
   IconButton,
-  MultilineTextInput,
+  TextareaInput,
   InputError,
   CheckboxInput,
   SelectInput,
@@ -55,7 +55,7 @@ export function InputsPage() {
 
       <div>
         <InputLabel className="text-gray-600">Description</InputLabel>
-        <MultilineTextInput
+        <TextareaInput
           onChange={(e) => setDescription(e.currentTarget.value)}
           value={description}
           placeholder="Some text.."
@@ -76,13 +76,14 @@ export function InputsPage() {
       <div>
         <InputLabel className="text-gray-600">Description</InputLabel>
         <SelectInput
+          options={[
+            { value: '1', label: 'Option 1' },
+            { value: '2', label: 'Option 2' },
+            { value: '3', label: 'Option 3' },
+          ]}
           icon={<ChevronDown className="text-violet-600 w-6" />}
           className="border rounded-xl border-gray-300 focus-within:ring-green-200 focus-within:ring-2"
-        >
-          <option>Option 1</option>
-          <option>Option 2</option>
-          <option>Option 3</option>
-        </SelectInput>
+        />
         <InputHelper className="text-gray-500">Select an option</InputHelper>
       </div>
     </div>

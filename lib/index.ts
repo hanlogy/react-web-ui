@@ -41,6 +41,13 @@ export {
   InputLabel,
 } from './components/inputs/elements';
 export { TextInput } from './components/inputs/TextInput';
-export { MultilineTextInput } from './components/inputs/MultilineTextInput';
+export { TextareaInput } from './components/inputs/TextareaInput';
 export { CheckboxInput } from './components/inputs/CheckboxInput';
 export { SelectInput } from './components/inputs/SelectInput';
+
+// form
+export { useForm } from './form/useForm';
+export { createTextField } from './form/createTextField';
+export { createTextareaField } from './form/createTextareaField';
+export { createCheckboxField } from './form/createCheckboxField';
+export { createSelectField } from './form/createSelectField';

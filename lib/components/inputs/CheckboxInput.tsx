@@ -1,6 +1,6 @@
-import type { ComponentProps, ReactNode } from 'react';
 import { FlexCenter } from '../centers';
 import { clsx } from '../../helpers/clsx';
+import type { CheckboxInputProps } from './types';
 
 export function CheckboxInput({
   className,
@@ -8,11 +8,7 @@ export function CheckboxInput({
   icon,
   label,
   ...rest
-}: Omit<ComponentProps<'input'>, 'type'> & {
-  icon?: ReactNode;
-  isRadio?: boolean;
-  label?: string;
-}) {
+}: CheckboxInputProps) {
   return (
     <label className="inline-flex">
       <FlexCenter className="h-6 w-6 shrink-0">
