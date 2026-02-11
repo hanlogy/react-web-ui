@@ -8,7 +8,7 @@ export function DialogActionBar({
   return (
     <div
       className={clsx(
-        'flex flex-none items-center justify-end gap-2 px-6',
+        'flex flex-none items-center justify-end gap-2 px-6 mt-6',
         className,
       )}
     >
