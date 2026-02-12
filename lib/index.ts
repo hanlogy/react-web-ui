@@ -22,8 +22,10 @@ export { Button } from './components/buttons/Button';
 export { IconButton } from './components/buttons/IconButton';
 export type {
   ButtonProps,
+  IconButtonProps,
   ButtonSize,
   ButtonType,
+  IconButtonWidth,
 } from './components/buttons/types';
 
 // dialog
