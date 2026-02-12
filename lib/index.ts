@@ -48,14 +48,8 @@ export { TextareaInput } from './components/inputs/TextareaInput';
 export { CheckboxInput } from './components/inputs/CheckboxInput';
 export { SelectInput } from './components/inputs/SelectInput';
 
-// form
-export {
-  useForm,
-  type FormFieldController,
-  type FormFieldRegister,
-  type FormSetFieldValue,
-} from './form/useForm';
-export { createTextField } from './form/createTextField';
-export { createTextareaField } from './form/createTextareaField';
-export { createCheckboxField } from './form/createCheckboxField';
-export { createSelectField } from './form/createSelectField';
+// form deprecated
+/**
+ * @deprecated
+ */
+export * as formDeprecated from './form.deprecated';

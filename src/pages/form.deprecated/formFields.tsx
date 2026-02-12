@@ -1,10 +1,11 @@
-import {
-  clsx,
+import { clsx, formDeprecated } from '@hanlogy/react-web-ui';
+
+const {
   createTextField,
   createTextareaField,
   createSelectField,
   createCheckboxField,
-} from '@hanlogy/react-web-ui';
+} = formDeprecated;
 
 const labelClass = 'text-gray-500';
 const helperClass = 'text-gray-500';

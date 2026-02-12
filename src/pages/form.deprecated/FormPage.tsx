@@ -2,7 +2,7 @@ import {
   Button,
   IconButton,
   IconWrapper,
-  useForm,
+  formDeprecated,
 } from '@hanlogy/react-web-ui';
 import {
   CheckboxField,
@@ -12,6 +12,7 @@ import {
 } from './formFields';
 import { CloseIcon, PersonIcon } from '../../components/icons';
 import { useState } from 'react';
+const { useForm } = formDeprecated;
 
 interface FormData {
   name: string;

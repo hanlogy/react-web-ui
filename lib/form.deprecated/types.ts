@@ -45,5 +45,11 @@ export interface FormElementsClassNameBuilders {
 
 export type InputPropsForForm<T> = Omit<
   T,
-  'name' | 'onChange' | 'ref' | 'className' | 'defaultChecked' | 'defaultValue' | 'value'
+  | 'name'
+  | 'onChange'
+  | 'ref'
+  | 'className'
+  | 'defaultChecked'
+  | 'defaultValue'
+  | 'value'
 >;
