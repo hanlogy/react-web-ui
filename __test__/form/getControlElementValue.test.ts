@@ -1,4 +1,4 @@
-import { getControlElementValue } from '../../lib/form2/getControlElementValue';
+import { getControlElementValue } from '../../lib/form/getControlElementValue';
 
 describe('getControlElementValue', () => {
   test('checkbox', () => {

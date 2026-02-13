@@ -1,4 +1,4 @@
-import { setControlElementValue } from '../../lib/form2/setControlElementValue';
+import { setControlElementValue } from '../../lib/form/setControlElementValue';
 
 describe('setControlElementValue', () => {
   describe('checkbox', () => {
