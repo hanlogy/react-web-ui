@@ -1,40 +1,83 @@
-'use client';
-
-import { useCallback, useRef, type SubmitEvent } from 'react';
+import { useCallback, useRef } from 'react';
 import type {
-  FormFieldRegisterOptions,
-  FormInputValueChange,
+  DefaultFormData,
+  FormControlElement,
+  FormDataBase,
   FormErrorListener,
-  FormInitializeValuesOptions,
+  FormFieldController,
+  FormFieldRegisterOptions,
+  FormFieldsCollectionOptions,
+  KeyOfFormData,
+  ValuesChangeListener,
 } from './types';
+import { setControlElementValue } from './setControlElementValue';
+import { getControlElementValue } from './getControlElementValue';
+import { collectValues } from './collectValues';
+import { isFormValuesChanged, isFormFieldValueChanged } from './helpers';
 
-export function useForm<T>() {
-  const registeredRef = useRef<
-    Partial<{
-      [K in keyof T]: FormFieldRegisterOptions<T> & {
-        ref: HTMLElement | null;
-      };
-    }>
-  >({});
+/**
+ * A **non-reactive** form state manager
+ *
+ * Form data:
+ * - valid field key must be `string` type. (It is fine if FormDataT contains
+ *   non-string keys.)
+ * - field value can be `string | boolean | undefined`. `boolean` is for
+ *   checkbox `<input>` only.
+ */
+export function useForm<
+  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+>() {
+  type FormFieldNameT = KeyOfFormData<FormDataT>;
 
-  const mountedFieldsRef = useRef<Set<keyof T>>(new Set());
-  const valuesRef = useRef<Partial<{ [K in keyof T]: T[K] }>>({});
   const initializedRef = useRef<boolean>(false);
+
+  // null when unmounted
+  const registeredElementsRef = useRef<
+    Partial<Record<keyof FormDataT, FormControlElement | null>>
+  >({});
+
+  const registeredOptionsRef = useRef<
+    Partial<Record<keyof FormDataT, FormFieldRegisterOptions<FormDataT>>>
+  >({});
+
+  // Fields have ever changed value.
+  const dirtyFieldsRef = useRef<Set<keyof FormDataT>>(new Set());
+
+  const unattachedValuesRef = useRef<Partial<FormDataT>>({});
+
+  // Only for onValueChange
+  const prevousValuesRef = useRef<Partial<FormDataT>>({});
+
   const fieldErrorsRef = useRef<
-    Partial<{ [K in keyof T]: string | undefined }>
+    Partial<Record<keyof FormDataT, string | undefined>>
   >({});
+
   const fieldErrorListenersRef = useRef<
-    Partial<{ [K in keyof T]: FormErrorListener | undefined }>
+    Partial<Record<keyof FormDataT, FormErrorListener | undefined>>
   >({});
-  const valuesBufferRef = useRef<Partial<{ [K in keyof T]: T[K] }>>({});
-  const detachedValuesRef = useRef<Partial<{ [K in keyof T]: T[K] }>>({});
+
   const formErrorRef = useRef<{ listener?: FormErrorListener; error?: string }>(
     {},
   );
 
-  const getValues = useCallback(() => ({ ...valuesRef.current }), []);
+  const valuesChangeListenerRef =
+    useRef<ValuesChangeListener<FormDataT>>(undefined);
 
-  const setFieldError = useCallback((field: keyof T, error?: string) => {
+  // Only returns the values of the mounted elements when allFields is false.
+  const getValues = useCallback(
+    (
+      options: FormFieldsCollectionOptions<FormFieldNameT> = {},
+    ): Partial<FormDataT> => {
+      return collectValues(
+        registeredElementsRef.current,
+        unattachedValuesRef.current,
+        options,
+      );
+    },
+    [],
+  );
+
+  const setFieldError = useCallback((field: FormFieldNameT, error?: string) => {
     if (fieldErrorsRef.current[field] === error) {
       return;
     }
@@ -56,163 +99,15 @@ export function useForm<T>() {
     listener?.(error);
   }, []);
 
-  const applyValueChange = useCallback(
-    <K extends keyof T>(
-      onValueChange: FormInputValueChange<T> | undefined,
-      field: K,
-      value?: T[K],
-      {
-        silent,
-        shouldClearErrors,
-      }: Pick<FormInitializeValuesOptions, 'silent' | 'shouldClearErrors'> = {},
-    ) => {
-      const valuesBefore = { ...valuesRef.current };
-      const newValues = { ...valuesBefore, [field]: value };
+  const setFormErrorListener = useCallback((listener: FormErrorListener) => {
+    formErrorRef.current.listener = listener;
+  }, []);
 
-      valuesRef.current = newValues;
-      if (shouldClearErrors) {
-        if (fieldErrorsRef.current[field]) {
-          setFieldError(field, undefined);
-        }
-        if (formErrorRef.current.error) {
-          setFormError(undefined);
-        }
-      }
-
-      if (onValueChange && !silent) {
-        onValueChange(newValues, { valuesBefore, field });
-      }
+  const setValuesChangeListener = useCallback(
+    (listener?: ValuesChangeListener<FormDataT>) => {
+      valuesChangeListenerRef.current = listener;
     },
-    [setFieldError, setFormError],
-  );
-
-  const setFieldValue = useCallback(
-    <K extends keyof T>(
-      field: K,
-      value?: T[K],
-      {
-        emitEvent = true,
-        silent = false,
-        shouldClearErrors = true,
-      }: FormInitializeValuesOptions = {},
-    ) => {
-      const registry = registeredRef.current[field];
-      const element = registry?.ref;
-      if (!element) {
-        valuesBufferRef.current[field] = value;
-        return;
-      }
-      if (element instanceof HTMLInputElement && element.type === 'checkbox') {
-        element.checked = value === true;
-      } else if (
-        element instanceof HTMLSelectElement ||
-        element instanceof HTMLInputElement ||
-        element instanceof HTMLTextAreaElement
-      ) {
-        const stringValue =
-          typeof value === 'string'
-            ? value
-            : value != null
-              ? String(value)
-              : '';
-        element.value = stringValue;
-      }
-
-      if (emitEvent) {
-        element.dispatchEvent(new Event('input', { bubbles: true }));
-      }
-      applyValueChange(registry?.onValueChange, field, value, {
-        silent,
-        shouldClearErrors,
-      });
-    },
-    [applyValueChange],
-  );
-
-  const setInitialValues = useCallback(
-    (
-      data: Partial<T>,
-      {
-        emitEvent = true,
-        silent = false,
-        force = false,
-      }: FormInitializeValuesOptions = {},
-    ) => {
-      if (!force && initializedRef.current) {
-        return;
-      }
-
-      initializedRef.current = true;
-      for (const field in data) {
-        setFieldValue(field, data[field], { silent, emitEvent });
-      }
-    },
-    [setFieldValue],
-  );
-
-  const register = useCallback(
-    <E extends HTMLElement, K extends keyof T>(
-      field: K,
-      options: FormFieldRegisterOptions<T> = {},
-    ) => {
-      registeredRef.current[field] = { ref: null as E | null, ...options };
-
-      return {
-        name: field,
-        ref: (element: E | null) => {
-          if (!registeredRef.current[field]) {
-            return;
-          }
-
-          if (element) {
-            mountedFieldsRef.current.add(field);
-            registeredRef.current[field].ref = element;
-
-            const valueBuffer = valuesBufferRef.current[field];
-            const detachedValue = detachedValuesRef.current[field];
-
-            if (valueBuffer) {
-              // There should not be possible both valueBuffer & detachedValue
-              // exist.
-              if (!detachedValue) {
-                setFieldValue(field, valueBuffer);
-              }
-              delete valuesBufferRef.current[field];
-            }
-
-            if (detachedValue) {
-              setFieldValue(field, detachedValue, {
-                // Keep the errors when umount/mount
-                shouldClearErrors: false,
-              });
-              delete detachedValuesRef.current[field];
-            }
-          } else {
-            mountedFieldsRef.current.delete(field);
-            // Move the value into detachedValuesRef when element unmounted, and
-            // set the value when this element is put back.
-            detachedValuesRef.current[field] = valuesRef.current[field];
-            // Do not delete field from valuesRef, otherwise it might result
-            // an empty `values` in dev StrictMode, (React StrictMode "stale
-            // object reference: issue?) for example when run a RTK query
-            // mutaion.
-          }
-        },
-        // This method does not dispatch a change event. We normally use it in
-        // side the onChange listener. use setFieldValue if we want to dispatch
-        // a change event programmatically.
-        setValue: (value: T[K]) => {
-          applyValueChange(options.onValueChange, field, value, {
-            shouldClearErrors: true,
-          });
-        },
-        // It is only allowed to set one listener
-        setErrorListener: (listener: FormErrorListener) => {
-          fieldErrorListenersRef.current[field] = listener;
-        },
-      };
-    },
-    [applyValueChange, setFieldValue],
+    [],
   );
 
   const clearErrors = useCallback(() => {
@@ -220,65 +115,142 @@ export function useForm<T>() {
     for (const field in fieldErrorsRef.current) {
       setFieldError(field, undefined);
     }
-  }, [setFieldError, setFormError]);
+  }, [setFormError, setFieldError]);
 
-  const validate = useCallback(
-    (fields: (keyof T)[] = []) => {
-      clearErrors();
+  const setFieldValue = useCallback(
+    <K extends FormFieldNameT>(name: K, value: FormDataT[K]) => {
+      const registered = registeredElementsRef.current[name];
 
-      const allKeys = Object.keys(registeredRef.current) as (keyof T)[];
-      const keysToValidate = fields.length > 0 ? fields : allKeys;
-
-      for (const field of keysToValidate) {
-        if (!mountedFieldsRef.current.has(field)) {
-          continue;
-        }
-
-        const { validator } = registeredRef.current[field] ?? {};
-        if (validator) {
-          const validateResult = validator(valuesRef.current);
-          if (validateResult) {
-            setFieldError(field, validateResult);
-            return false;
-          }
-        }
+      if (registered) {
+        setControlElementValue(registered, value);
+        registered.dispatchEvent(new Event('input', { bubbles: true }));
+      } else {
+        unattachedValuesRef.current[name] = value;
       }
-      return true;
     },
-    [clearErrors, setFieldError],
+    [],
   );
 
-  const setFormErrorListener = useCallback((listener: FormErrorListener) => {
-    formErrorRef.current.listener = listener;
-  }, []);
+  const setInitialValues = useCallback(
+    (
+      data: Partial<FormDataT>,
+      {
+        force = false,
+      }: {
+        force?: boolean;
+      } = {},
+    ) => {
+      if (!force && initializedRef.current) {
+        return;
+      }
 
-  const handleSubmit = useCallback(
-    <K extends keyof T = keyof T, F = VoidFunction>(
-      handler: (data: Pick<T, K>) => void,
-      fields?: K[],
-    ): F => {
-      return ((e?: SubmitEvent) => {
-        e?.preventDefault();
-
-        if (!validate(fields)) {
-          return;
+      initializedRef.current = true;
+      for (const field in data) {
+        if (!data[field]) {
+          continue;
         }
-
-        const values = { ...valuesRef.current };
-        const activeKeys = fields?.length
-          ? fields
-          : (Array.from(mountedFieldsRef.current) as K[]);
-
-        const data = Object.fromEntries(
-          activeKeys
-            .filter((k) => mountedFieldsRef.current.has(k))
-            .map((k) => [k, values[k]]),
-        ) as Pick<T, K>;
-
-        handler(data);
-      }) as F;
+        setFieldValue(field, data[field]);
+      }
     },
-    [validate],
+    [setFieldValue],
+  );
+
+  const validate = useCallback(
+    (options: FormFieldsCollectionOptions<FormFieldNameT> = {}): boolean => {
+      let isTrue = true;
+      const values = getValues(options);
+
+      for (const name in values) {
+        const error = registeredOptionsRef.current[name]?.validator?.(values);
+        if (!error) {
+          continue;
+        }
+        setFieldError(name, error);
+        isTrue = false;
+      }
+
+      return isTrue;
+    },
+    [getValues, setFieldError],
+  );
+
+  const register = useCallback(
+    <K extends FormFieldNameT>(
+      fieldName: K,
+      options: FormFieldRegisterOptions<FormDataT> = {},
+    ): FormFieldController<FormDataT, K, FormDataT[K]> => {
+      registeredOptionsRef.current[fieldName] = options;
+
+      return {
+        name: fieldName,
+        ref: (element: FormControlElement | null) => {
+          if (!element) {
+            return;
+          }
+
+          element.oninput = () => {
+            setFieldError(fieldName, undefined);
+            setFormError(undefined);
+            dirtyFieldsRef.current.add(fieldName);
+            const valuesBefore = prevousValuesRef.current;
+            const newValues = getValues({ allFields: true });
+
+            const onValueChange = options?.onValueChange;
+            if (
+              onValueChange &&
+              isFormFieldValueChanged(
+                valuesBefore[fieldName],
+                newValues[fieldName],
+              )
+            ) {
+              onValueChange(newValues, { field: fieldName, valuesBefore });
+            }
+
+            const ValuesChangeListener = valuesChangeListenerRef.current;
+
+            if (
+              ValuesChangeListener &&
+              isFormValuesChanged(valuesBefore, newValues)
+            ) {
+              ValuesChangeListener(newValues, valuesBefore);
+            }
+
+            prevousValuesRef.current = newValues;
+          };
+
+          registeredElementsRef.current[fieldName] = element;
+
+          const unattachedValue = unattachedValuesRef.current[fieldName];
+
+          if (unattachedValue !== undefined) {
+            setFieldValue(fieldName, unattachedValue);
+            unattachedValuesRef.current[fieldName] = undefined;
+          }
+
+          return () => {
+            // In <StrictMode>, elements may be mounted/unmounted twice in
+            // development.
+            // Without this guard, onChange could be triggered even though the
+            // value did not change.
+            if (dirtyFieldsRef.current.has(fieldName)) {
+              unattachedValuesRef.current[fieldName] = getControlElementValue(
+                element,
+              ) as FormDataT[K];
+            }
+            registeredElementsRef.current[fieldName] = null;
+          };
+        },
+
+        setValue: (value: FormDataT[K]) => {
+          setFieldValue(fieldName, value);
+        },
+
+        setErrorListener: (listener?: FormErrorListener) => {
+          fieldErrorListenersRef.current[fieldName] = listener;
+        },
+      };
+    },
+    [setFieldValue, setFieldError, setFormError, getValues],
   );
 
   return {
@@ -289,22 +261,26 @@ export function useForm<T>() {
     setFieldError,
     setFormError,
     setFormErrorListener,
+    setValuesChangeListener,
     clearErrors,
-    handleSubmit,
     validate,
   };
 }
 
-type UseFormReturn<T> = ReturnType<typeof useForm<T>>;
+type UseFormReturn<T extends FormDataBase<T>> = ReturnType<typeof useForm<T>>;
 
-export type FormFieldRegister<T> = UseFormReturn<T>['register'];
+export type FormFieldRegister<T extends FormDataBase<T> = DefaultFormData> =
+  UseFormReturn<T>['register'];
 
-export type FormSetFieldValue<T> = UseFormReturn<T>['setFieldValue'];
+export type FormSetFieldValue<T extends FormDataBase<T> = DefaultFormData> =
+  UseFormReturn<T>['setFieldValue'];
 
-export type FormFieldController<T, V, K> = Omit<
-  ReturnType<ReturnType<typeof useForm<T>>['register']>,
-  'setValue'
-> & {
-  name: K;
-  setValue: (value: V) => void;
-};
+export type FormSetInitialValues<T extends FormDataBase<T> = DefaultFormData> =
+  UseFormReturn<T>['setInitialValues'];
+
+// DEV NOTE:
+// - The returned functions must be stable, wrap it with `useCallback` if not.
+// - radio inputs are not supported. Use distinct field names for each radio input
+//   instead.
+// - We do not support initial value(have tried in the old design, added great
+//   complexity, maybe we can add this support in this version)

@@ -22,8 +22,10 @@ export { Button } from './components/buttons/Button';
 export { IconButton } from './components/buttons/IconButton';
 export type {
   ButtonProps,
+  IconButtonProps,
   ButtonSize,
   ButtonType,
+  IconButtonWidth,
 } from './components/buttons/types';
 
 // dialog
@@ -49,11 +51,20 @@ export { SelectInput } from './components/inputs/SelectInput';
 // form
 export {
   useForm,
-  type FormFieldController,
   type FormFieldRegister,
   type FormSetFieldValue,
+  type FormSetInitialValues,
 } from './form/useForm';
-export { createTextField } from './form/createTextField';
-export { createTextareaField } from './form/createTextareaField';
-export { createCheckboxField } from './form/createCheckboxField';
-export { createSelectField } from './form/createSelectField';
+
+export type {
+  FormFieldController,
+  FormDataBase,
+  KeyOfFormData,
+  FormFieldValue,
+} from './form/types';
+export {
+  createTextField,
+  createTextareaField,
+  createSelectField,
+  createCheckboxField,
+} from './form/fieldCreators';

@@ -1,36 +1,64 @@
+// Elements that form controller supports attaching a ref to.
+export type FormControlElement =
+  | HTMLInputElement
+  | HTMLTextAreaElement
+  | HTMLSelectElement;
+
+// This default type is very useful when a form is distributed in different
+// files.
+export type DefaultFormData = Record<string, FormFieldValue>;
+export type KeyOfFormData<T extends object> = Extract<keyof T, string>;
+export type FormFieldValue = string | boolean;
+
+export type FormDataBase<FormDataT> = {
+  [K in keyof FormDataT]: FormFieldValue | undefined;
+};
+
+export type FormInputValueChange<FormDataT extends FormDataBase<FormDataT>> = <
+  K extends KeyOfFormData<FormDataT>,
+>(
+  values: Partial<FormDataT>,
+  extra: {
+    field: K;
+    valuesBefore: Partial<FormDataT>;
+  },
+) => void;
+
+export type FormFieldsCollectionOptions<T extends string> =
+  | { allFields: true; fields?: never }
+  | { allFields?: false; fields?: T[] };
+
 export type FormFieldValidator<T> = (
   values: Partial<T>,
 ) => string | undefined | void;
 
-export type FormInputValueChange<T> = <K extends keyof T>(
-  values: Partial<T>,
-  extra: {
-    readonly field: K;
-    readonly valuesBefore: Partial<T>;
-  },
-) => void;
+export type FormFieldRegisterOptions<
+  FormDataT extends FormDataBase<FormDataT>,
+> = Readonly<{
+  validator?: FormFieldValidator<FormDataT>;
+  onValueChange?: FormInputValueChange<FormDataT>;
+}>;
 
-export type FormFieldRegisterOptions<T> = {
-  validator?: FormFieldValidator<T>;
-  onValueChange?: FormInputValueChange<T>;
-};
-
-export type FormErrorListener = (error?: string) => void;
-
-export interface FormInitializeValuesOptions {
-  // If it will dispatch a change event(This event is the html raw event, we
-  // we need to use onchange to capture it. Not React onChange)
-  readonly emitEvent?: boolean;
-
-  // It will not invoke onValueChange if true.
-  readonly silent?: boolean;
-
-  readonly force?: boolean;
-
-  readonly shouldClearErrors?: boolean;
+// We must have all the three generic types, in order to build up the inference
+// when `register`.
+export interface FormFieldController<
+  FormDataT extends FormDataBase<FormDataT>,
+  FormFieldNameT extends KeyOfFormData<FormDataT> = KeyOfFormData<FormDataT>,
+  FormFieldValueT extends FormDataT[FormFieldNameT] = FormDataT[FormFieldNameT],
+> {
+  name: FormFieldNameT;
+  ref: (element: FormControlElement | null) => void;
+  setValue: (value: FormFieldValueT) => void;
+  setErrorListener: (listener: FormErrorListener) => void;
 }
 
-export type StringKeyOf<T extends object> = Extract<keyof T, string>;
+// Used by both field error listeners and the listener that observe errors not
+// associated with any specific field.
+export type FormErrorListener = (error?: string) => void;
+
+export type ValuesChangeListener<
+  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+> = (current: Partial<FormDataT>, previous: Partial<FormDataT>) => void;
 
 export type FieldStateClassBuilder =
   | string
@@ -45,5 +73,12 @@ export interface FormElementsClassNameBuilders {
 
 export type InputPropsForForm<T> = Omit<
   T,
-  'name' | 'onChange' | 'ref' | 'className' | 'defaultChecked' | 'defaultValue' | 'value'
+  | 'name'
+  | 'onChange'
+  | 'onInput'
+  | 'ref'
+  | 'className'
+  | 'defaultChecked'
+  | 'defaultValue'
+  | 'value'
 >;

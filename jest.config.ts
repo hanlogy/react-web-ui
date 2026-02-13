@@ -7,7 +7,7 @@ const config: Config = {
     tsconfig: '<rootDir>/tsconfig.jest.json',
   }),
 
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   moduleNameMapper: pathsToModuleNameMapper(
     {
       '@hanlogy/react-web-ui/*': ['lib/*'],
