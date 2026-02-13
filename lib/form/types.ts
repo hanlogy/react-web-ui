@@ -69,12 +69,7 @@ export interface FormElementsClassNameBuilders {
 
 export type InputPropsForForm<T> = Omit<
   T,
-  | 'name'
-  | 'onChange'
-  | 'onInput'
-  | 'ref'
-  | 'className'
-  | 'defaultChecked'
-  | 'defaultValue'
-  | 'value'
+  // Do not exclude defaultValue and defaultChecked, we need to support form
+  // reset.
+  'name' | 'onChange' | 'onInput' | 'ref' | 'className' | 'value'
 >;

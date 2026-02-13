@@ -118,12 +118,22 @@ export function useForm<
   }, [setFormError, setFieldError]);
 
   const setFieldValue = useCallback(
-    <K extends FormFieldNameT>(name: K, value: FormDataT[K]) => {
+    <K extends FormFieldNameT>(
+      name: K,
+      value: FormDataT[K],
+      {
+        silent = false,
+      }: {
+        silent?: boolean;
+      } = {},
+    ) => {
       const registered = registeredElementsRef.current[name];
 
       if (registered) {
         setControlElementValue(registered, value);
-        registered.dispatchEvent(new Event('input', { bubbles: true }));
+        if (!silent) {
+          registered.dispatchEvent(new Event('input', { bubbles: true }));
+        }
       } else {
         unattachedValuesRef.current[name] = value;
       }
@@ -136,8 +146,10 @@ export function useForm<
       data: Partial<FormDataT>,
       {
         force = false,
+        silent = true,
       }: {
         force?: boolean;
+        silent?: boolean;
       } = {},
     ) => {
       if (!force && initializedRef.current) {
@@ -146,10 +158,10 @@ export function useForm<
 
       initializedRef.current = true;
       for (const field in data) {
-        if (!data[field]) {
+        if (data[field] === undefined) {
           continue;
         }
-        setFieldValue(field, data[field]);
+        setFieldValue(field, data[field], { silent });
       }
     },
     [setFieldValue],
@@ -188,6 +200,9 @@ export function useForm<
             return;
           }
 
+          // NOTE:
+          // We might consider to use `addEventListener('input')` later,
+          // currently we do not support binding custom input listener.
           element.oninput = () => {
             const valuesBefore = prevousValuesRef.current;
             const newValues = getValues({ allFields: true });
@@ -198,6 +213,7 @@ export function useForm<
                 newValues[fieldName],
               )
             ) {
+              dirtyFieldsRef.current.add(fieldName);
               setFieldError(fieldName, undefined);
               setFormError(undefined);
               const extra = {
@@ -208,7 +224,7 @@ export function useForm<
               options?.onValueChange?.(newValues, extra);
 
               // No need to check the change of entire form data.
-              valuesChangeListenerRef.current?.(valuesBefore, extra);
+              valuesChangeListenerRef.current?.(newValues, extra);
               prevousValuesRef.current = newValues;
             }
           };
@@ -278,6 +294,7 @@ export type FormSetValuesChangeListener<
 > = UseFormReturn<T>['setValuesChangeListener'];
 
 // DEV NOTE:
+// - Design principle: uncontrolled inputs + DOM as source of truth.
 // - The returned functions must be stable, wrap it with `useCallback` if not.
 // - radio inputs are not supported. Use distinct field names for each radio input
 //   instead.

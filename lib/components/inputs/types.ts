@@ -18,7 +18,7 @@ export type CheckboxInputProps = Omit<
 
 export type SelectInputProps = Omit<
   ComponentPropsWithRef<'select'>,
-  'children'
+  'children' | 'multiple'
 > & {
   icon?: ReactNode | undefined;
   options: readonly Readonly<{ value: string; label: string }>[];
