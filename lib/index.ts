@@ -48,12 +48,6 @@ export { TextareaInput } from './components/inputs/TextareaInput';
 export { CheckboxInput } from './components/inputs/CheckboxInput';
 export { SelectInput } from './components/inputs/SelectInput';
 
-// form deprecated
-/**
- * @deprecated
- */
-export * as formDeprecated from './form.deprecated';
-
 // form
 export {
   useForm,

@@ -6,7 +6,6 @@ const pages = [
   { path: '/buttons', label: 'Buttons' },
   { path: '/inputs', label: 'Inputs' },
   { path: '/form', label: 'Form' },
-  { path: '/form-deprecated', label: 'Form deprecated' },
   { path: '/collapsible-tree', label: 'Collapsible Tree' },
   { path: '/dropdowns', label: 'Dropdowns' },
   { path: '/dialogs', label: 'Dialogs' },

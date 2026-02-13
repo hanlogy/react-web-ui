@@ -9,7 +9,6 @@ import { ButtonsPage } from './pages/buttons/ButtonsPage';
 import { CollapsibleTreePage } from './pages/collapsible-tree/CollapsibleTreePage';
 import { DropdownsPage } from './pages/dropdowns/DropdownsPage';
 import { DialogsPage } from './pages/dialogs/DialogsPage';
-import { FormPage as FormPageDeprecated } from './pages/form.deprecated/FormPage';
 import { InputsPage } from './pages/inputs/InputsPage';
 import { FormPage } from './pages/form/FormPage';
 
@@ -25,7 +24,6 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/dropdowns" element={<DropdownsPage />} />
           <Route path="/dialogs" element={<DialogsPage />} />
           <Route path="/form" element={<FormPage />} />
-          <Route path="/form-deprecated" element={<FormPageDeprecated />} />
           <Route path="/inputs" element={<InputsPage />} />
         </Route>
       </Routes>
