@@ -1,5 +1,6 @@
 import {
   Button,
+  clsx,
   IconButton,
   IconWrapper,
   useForm,
@@ -24,6 +25,7 @@ export function FormPage() {
   const { register, setFieldValue, setInitialValues, validate, getValues } =
     useForm<FormData>();
   const [count, setCount] = useState(1);
+  const [tab, setTab] = useState('detail');
 
   const handleSubmit = (e?: SubmitEvent) => {
     e?.preventDefault();
@@ -39,84 +41,95 @@ export function FormPage() {
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div>
-          <TextField
-            label="Name"
-            prefix={
-              <IconWrapper>
-                <PersonIcon className="text-gray-500" />
-              </IconWrapper>
-            }
-            suffix={
-              <IconButton
-                onClick={() => setFieldValue('name', '')}
-                className="text-gray-600 hover:text-red-600"
-              >
-                <CloseIcon />
-              </IconButton>
-            }
-            placeholder="Your name"
-            helper="Please enter your name"
-            controller={register('name', {
-              onValueChange: ({ name }) => {
-                console.log(`name is: ${name}`);
-              },
-              validator: ({ name }) => {
-                if (!name) {
-                  return 'Name cannot be empty';
-                }
-              },
-            })}
-          />
-        </div>
-        <div>
-          <TextareaField
-            label="Description"
-            helper="Enter some text"
-            controller={register('description', {})}
-          />
-        </div>
-        <div>
-          <SelectField
-            label="Level"
-            helper="Select a skill level"
-            options={[
-              { value: '', label: '' },
-              { value: '1', label: 'Level 1' },
-              { value: '2', label: 'Level 2' },
-              { value: '3', label: 'Level 3' },
-            ]}
-            controller={register('level', {
-              validator: ({ level }) => {
-                if (!level) {
-                  return 'You must select a level';
-                }
-              },
-              onValueChange: ({ level }) => {
-                console.log(level);
-              },
-            })}
-          />
-        </div>
+      <div className="mb-8 flex space-x-5">
+        <button onClick={() => setTab('detail')}>Detail</button>
+        <button onClick={() => setTab('settings')}>Settings</button>
+      </div>
 
-        <div>
-          {count % 2 === 1 && (
-            <CheckboxField
-              label="I agree"
-              helper="You must agree"
-              controller={register('agree', {
-                validator: ({ agree }) => {
-                  if (!agree) {
-                    return 'You must choose';
-                  }
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <div className={clsx({ hidden: tab !== 'settings' })}>
+          Some settings
+        </div>
+        <div className={clsx('space-y-8', { hidden: tab !== 'detail' })}>
+          <div>
+            <TextField
+              label="Name"
+              prefix={
+                <IconWrapper>
+                  <PersonIcon className="text-gray-500" />
+                </IconWrapper>
+              }
+              suffix={
+                <IconButton
+                  onClick={() => setFieldValue('name', '')}
+                  className="text-gray-600 hover:text-red-600"
+                >
+                  <CloseIcon />
+                </IconButton>
+              }
+              placeholder="Your name"
+              helper="Please enter your name"
+              controller={register('name', {
+                onValueChange: ({ name }) => {
+                  console.log(`name is: ${name}`);
                 },
-                onValueChange: ({ agree }) => {
-                  console.log(agree);
+                validator: ({ name }) => {
+                  if (!name) {
+                    setTab('detail');
+                    return 'Name cannot be empty';
+                  }
                 },
               })}
             />
-          )}
+          </div>
+          <div>
+            <TextareaField
+              label="Description"
+              helper="Enter some text"
+              controller={register('description', {})}
+            />
+          </div>
+          <div>
+            <SelectField
+              label="Level"
+              helper="Select a skill level"
+              options={[
+                { value: '', label: '' },
+                { value: '1', label: 'Level 1' },
+                { value: '2', label: 'Level 2' },
+                { value: '3', label: 'Level 3' },
+              ]}
+              controller={register('level', {
+                validator: ({ level }) => {
+                  if (!level) {
+                    return 'You must select a level';
+                  }
+                },
+                onValueChange: ({ level }) => {
+                  console.log(level);
+                },
+              })}
+            />
+          </div>
+
+          <div>
+            {count % 2 === 1 && (
+              <CheckboxField
+                label="I agree"
+                helper="You must agree"
+                controller={register('agree', {
+                  validator: ({ agree }) => {
+                    if (!agree) {
+                      return 'You must choose';
+                    }
+                  },
+                  onValueChange: ({ agree }) => {
+                    console.log(agree);
+                  },
+                })}
+              />
+            )}
+          </div>
         </div>
         <div className="space-x-2">
           <Button className="border" type="submit">
