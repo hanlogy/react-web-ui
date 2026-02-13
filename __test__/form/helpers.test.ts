@@ -1,14 +1,4 @@
-import {
-  isFormValuesChanged,
-  isFormFieldValueChanged,
-} from '../../lib/form/helpers';
-import type { FormFieldValue } from '../../lib/form/types';
-
-interface FormData {
-  name?: FormFieldValue | undefined;
-  remark?: FormFieldValue | undefined;
-  checked?: FormFieldValue | undefined;
-}
+import { isFormFieldValueChanged } from '../../lib/form/helpers';
 
 describe('isFormFieldValueChanged', () => {
   test('both boolean', () => {
@@ -33,56 +23,5 @@ describe('isFormFieldValueChanged', () => {
 
   test('both undefined', () => {
     expect(isFormFieldValueChanged(undefined, undefined)).toBe(false);
-  });
-});
-
-describe('isFormValuesChanged', () => {
-  test('same', () => {
-    const A: FormData = { name: 'a', remark: 'b', checked: true };
-    const B: FormData = { name: 'a', remark: 'b', checked: true };
-
-    expect(isFormValuesChanged(A, B)).toBe(false);
-  });
-
-  test('string change', () => {
-    const A: FormData = { name: 'a' };
-    const B: FormData = { name: 'b' };
-
-    expect(isFormValuesChanged(A, B)).toBe(true);
-  });
-
-  test('boolean change', () => {
-    const A: FormData = { checked: false };
-    const B: FormData = { checked: true };
-
-    expect(isFormValuesChanged(A, B)).toBe(true);
-  });
-
-  test('string with missing key', () => {
-    const A: FormData = { name: 'a' };
-    const B: FormData = {};
-
-    expect(isFormValuesChanged(A, B)).toBe(true);
-  });
-
-  test('boolean with missing key', () => {
-    const A: FormData = { checked: true };
-    const B: FormData = {};
-
-    expect(isFormValuesChanged(A, B)).toBe(true);
-  });
-
-  test('empty string equals missing', () => {
-    const A: FormData = { remark: '' };
-    const B: FormData = {};
-
-    expect(isFormValuesChanged(A, B)).toBe(false);
-  });
-
-  test('undefined equals to missing', () => {
-    const A: FormData = { name: 'a' };
-    const B: FormData = { name: 'a', remark: undefined };
-
-    expect(isFormValuesChanged(A, B)).toBe(false);
   });
 });

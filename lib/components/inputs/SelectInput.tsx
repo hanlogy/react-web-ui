@@ -4,18 +4,31 @@ import { hasRingClass } from './helpers';
 import { SvgIcon } from '../SvgIcon';
 import type { SelectInputProps } from './types';
 
+/**
+ * Support only single select.
+ */
 export function SelectInput({
   className,
   icon,
   options,
+  defaultValue,
   ...rest
 }: SelectInputProps) {
+  const resolvedDefaultValue = options.some(
+    (e) => e.value === String(defaultValue),
+  )
+    ? String(defaultValue)
+    : options.length > 0
+      ? options[0].value
+      : '';
+
   return (
     <div className="relative">
       <select
         className={clsx('h-14 w-full px-3 appearance-none', className, {
           'outline-none': hasRingClass(className),
         })}
+        defaultValue={resolvedDefaultValue}
         {...rest}
       >
         {options.map(({ label, value }) => (
