@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef } from 'react';
 import type {
   DefaultFormData,
   FormControlElement,
@@ -26,7 +26,15 @@ import { isFormFieldValueChanged } from './helpers';
  */
 export function useForm<
   FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
->() {
+>({
+  initialValues,
+  alwaysApplyInitialValues = false,
+  emitInitialValuesChange = false,
+}: {
+  initialValues?: Partial<FormDataT>;
+  alwaysApplyInitialValues?: boolean;
+  emitInitialValuesChange?: boolean;
+} = {}) {
   type FormFieldNameT = KeyOfFormData<FormDataT>;
 
   const initializedRef = useRef<boolean>(false);
@@ -40,13 +48,13 @@ export function useForm<
     Partial<Record<keyof FormDataT, FormFieldRegisterOptions<FormDataT>>>
   >({});
 
-  // Fields have ever changed value.
-  const dirtyFieldsRef = useRef<Set<keyof FormDataT>>(new Set());
+  // Fields have ever set a valid value.
+  const everSetFieldsRef = useRef<Set<keyof FormDataT>>(new Set());
 
   const unattachedValuesRef = useRef<Partial<FormDataT>>({});
 
   // Only for onValueChange
-  const prevousValuesRef = useRef<Partial<FormDataT>>({});
+  const valuesSnapshotRef = useRef<Partial<FormDataT>>({});
 
   const fieldErrorsRef = useRef<
     Partial<Record<keyof FormDataT, string | undefined>>
@@ -131,28 +139,38 @@ export function useForm<
 
       if (registered) {
         setControlElementValue(registered, value);
+
         if (!silent) {
           registered.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+          const prevousValue = valuesSnapshotRef.current[name];
+          if (isFormFieldValueChanged(prevousValue, value)) {
+            valuesSnapshotRef.current = getValues({ allFields: true });
+            everSetFieldsRef.current.add(name);
+          }
         }
       } else {
         unattachedValuesRef.current[name] = value;
       }
     },
-    [],
+    [getValues],
   );
 
+  // TODO: setInitialValues calls setFieldValue per field. If `silent` is false,
+  // this will dispatch multiple input/change events and trigger the form-level
+  // value change listener multiple times.
+  // Ideally, keep per-field listeners as is, but batch the form-level listener
+  // to fire once after all fields are applied.
+  // (Not urgent: initial values are normally applied with `silent: true`.)
   const setInitialValues = useCallback(
     (
       data: Partial<FormDataT>,
-      {
-        force = false,
-        silent = true,
-      }: {
-        force?: boolean;
-        silent?: boolean;
-      } = {},
+      { force, silent }: { force?: boolean; silent?: boolean } = {},
     ) => {
-      if (!force && initializedRef.current) {
+      const solvedForce = force ?? alwaysApplyInitialValues === true;
+      const solvedSilent = silent ?? emitInitialValuesChange !== true;
+
+      if (!solvedForce && initializedRef.current) {
         return;
       }
 
@@ -161,10 +179,10 @@ export function useForm<
         if (data[field] === undefined) {
           continue;
         }
-        setFieldValue(field, data[field], { silent });
+        setFieldValue(field, data[field], { silent: solvedSilent });
       }
     },
-    [setFieldValue],
+    [setFieldValue, alwaysApplyInitialValues, emitInitialValuesChange],
   );
 
   const validate = useCallback(
@@ -204,7 +222,7 @@ export function useForm<
           // We might consider to use `addEventListener('input')` later,
           // currently we do not support binding custom input listener.
           element.oninput = () => {
-            const valuesBefore = prevousValuesRef.current;
+            const valuesBefore = valuesSnapshotRef.current;
             const newValues = getValues({ allFields: true });
 
             if (
@@ -213,7 +231,7 @@ export function useForm<
                 newValues[fieldName],
               )
             ) {
-              dirtyFieldsRef.current.add(fieldName);
+              everSetFieldsRef.current.add(fieldName);
               setFieldError(fieldName, undefined);
               setFormError(undefined);
               const extra = {
@@ -225,7 +243,7 @@ export function useForm<
 
               // No need to check the change of entire form data.
               valuesChangeListenerRef.current?.(newValues, extra);
-              prevousValuesRef.current = newValues;
+              valuesSnapshotRef.current = newValues;
             }
           };
 
@@ -234,7 +252,7 @@ export function useForm<
           const unattachedValue = unattachedValuesRef.current[fieldName];
 
           if (unattachedValue !== undefined) {
-            setFieldValue(fieldName, unattachedValue);
+            setFieldValue(fieldName, unattachedValue, { silent: true });
             unattachedValuesRef.current[fieldName] = undefined;
           }
 
@@ -243,7 +261,7 @@ export function useForm<
             // development.
             // Without this guard, onChange could be triggered even though the
             // value did not change.
-            if (dirtyFieldsRef.current.has(fieldName)) {
+            if (everSetFieldsRef.current.has(fieldName)) {
               unattachedValuesRef.current[fieldName] = getControlElementValue(
                 element,
               ) as FormDataT[K];
@@ -263,6 +281,12 @@ export function useForm<
     },
     [setFieldValue, setFieldError, setFormError, getValues],
   );
+
+  useLayoutEffect(() => {
+    if (initialValues) {
+      setInitialValues(initialValues);
+    }
+  }, [initialValues, setInitialValues]);
 
   return {
     getValues,
@@ -298,5 +322,3 @@ export type FormSetValuesChangeListener<
 // - The returned functions must be stable, wrap it with `useCallback` if not.
 // - radio inputs are not supported. Use distinct field names for each radio input
 //   instead.
-// - We do not support initial value(have tried in the old design, added great
-//   complexity, maybe we can add this support in this version)
