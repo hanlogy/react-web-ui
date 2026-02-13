@@ -8,12 +8,12 @@ import type {
   FormFieldRegisterOptions,
   FormFieldsCollectionOptions,
   KeyOfFormData,
-  ValuesChangeListener,
+  FormValueChangeListener,
 } from './types';
 import { setControlElementValue } from './setControlElementValue';
 import { getControlElementValue } from './getControlElementValue';
 import { collectValues } from './collectValues';
-import { isFormValuesChanged, isFormFieldValueChanged } from './helpers';
+import { isFormFieldValueChanged } from './helpers';
 
 /**
  * A **non-reactive** form state manager
@@ -61,7 +61,7 @@ export function useForm<
   );
 
   const valuesChangeListenerRef =
-    useRef<ValuesChangeListener<FormDataT>>(undefined);
+    useRef<FormValueChangeListener<FormDataT>>(undefined);
 
   // Only returns the values of the mounted elements when allFields is false.
   const getValues = useCallback(
@@ -104,7 +104,7 @@ export function useForm<
   }, []);
 
   const setValuesChangeListener = useCallback(
-    (listener?: ValuesChangeListener<FormDataT>) => {
+    (listener?: FormValueChangeListener<FormDataT>) => {
       valuesChangeListenerRef.current = listener;
     },
     [],
@@ -189,33 +189,28 @@ export function useForm<
           }
 
           element.oninput = () => {
-            setFieldError(fieldName, undefined);
-            setFormError(undefined);
-            dirtyFieldsRef.current.add(fieldName);
             const valuesBefore = prevousValuesRef.current;
             const newValues = getValues({ allFields: true });
 
-            const onValueChange = options?.onValueChange;
             if (
-              onValueChange &&
               isFormFieldValueChanged(
                 valuesBefore[fieldName],
                 newValues[fieldName],
               )
             ) {
-              onValueChange(newValues, { field: fieldName, valuesBefore });
+              setFieldError(fieldName, undefined);
+              setFormError(undefined);
+              const extra = {
+                field: fieldName,
+                valuesBefore,
+              };
+
+              options?.onValueChange?.(newValues, extra);
+
+              // No need to check the change of entire form data.
+              valuesChangeListenerRef.current?.(valuesBefore, extra);
+              prevousValuesRef.current = newValues;
             }
-
-            const ValuesChangeListener = valuesChangeListenerRef.current;
-
-            if (
-              ValuesChangeListener &&
-              isFormValuesChanged(valuesBefore, newValues)
-            ) {
-              ValuesChangeListener(newValues, valuesBefore);
-            }
-
-            prevousValuesRef.current = newValues;
           };
 
           registeredElementsRef.current[fieldName] = element;
@@ -277,6 +272,10 @@ export type FormSetFieldValue<T extends FormDataBase<T> = DefaultFormData> =
 
 export type FormSetInitialValues<T extends FormDataBase<T> = DefaultFormData> =
   UseFormReturn<T>['setInitialValues'];
+
+export type FormSetValuesChangeListener<
+  T extends FormDataBase<T> = DefaultFormData,
+> = UseFormReturn<T>['setValuesChangeListener'];
 
 // DEV NOTE:
 // - The returned functions must be stable, wrap it with `useCallback` if not.

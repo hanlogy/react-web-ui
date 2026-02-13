@@ -14,10 +14,10 @@ export type FormDataBase<FormDataT> = {
   [K in keyof FormDataT]: FormFieldValue | undefined;
 };
 
-export type FormInputValueChange<FormDataT extends FormDataBase<FormDataT>> = <
-  K extends KeyOfFormData<FormDataT>,
->(
-  values: Partial<FormDataT>,
+export type FormValueChangeListener<
+  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+> = <K extends KeyOfFormData<FormDataT>>(
+  current: Partial<FormDataT>,
   extra: {
     field: K;
     valuesBefore: Partial<FormDataT>;
@@ -36,7 +36,7 @@ export type FormFieldRegisterOptions<
   FormDataT extends FormDataBase<FormDataT>,
 > = Readonly<{
   validator?: FormFieldValidator<FormDataT>;
-  onValueChange?: FormInputValueChange<FormDataT>;
+  onValueChange?: FormValueChangeListener<FormDataT>;
 }>;
 
 // We must have all the three generic types, in order to build up the inference
@@ -55,10 +55,6 @@ export interface FormFieldController<
 // Used by both field error listeners and the listener that observe errors not
 // associated with any specific field.
 export type FormErrorListener = (error?: string) => void;
-
-export type ValuesChangeListener<
-  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
-> = (current: Partial<FormDataT>, previous: Partial<FormDataT>) => void;
 
 export type FieldStateClassBuilder =
   | string

@@ -1,10 +1,4 @@
-import type {
-  DefaultFormData,
-  FieldStateClassBuilder,
-  FormDataBase,
-  FormFieldValue,
-  KeyOfFormData,
-} from './types';
+import type { FieldStateClassBuilder, FormFieldValue } from './types';
 
 export function resolveFieldStateClass(
   builder: FieldStateClassBuilder | undefined = '',
@@ -25,35 +19,4 @@ export function isFormFieldValueChanged(
   }
 
   return !!A !== !!B;
-}
-
-function getFormDataKeys<FormDataT extends object>(
-  values: FormDataT,
-): KeyOfFormData<FormDataT>[] {
-  return Object.keys(values) as KeyOfFormData<FormDataT>[];
-}
-
-export function isFormValuesChanged<
-  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
->(A: FormDataT, B: FormDataT): boolean {
-  const allKeys = new Set<KeyOfFormData<FormDataT>>();
-
-  for (const key of getFormDataKeys(A)) {
-    allKeys.add(key);
-  }
-
-  for (const key of getFormDataKeys(B)) {
-    allKeys.add(key);
-  }
-
-  for (const key of allKeys) {
-    const valueA = A[key];
-    const valueB = B[key];
-
-    if (isFormFieldValueChanged(valueA, valueB)) {
-      return true;
-    }
-  }
-
-  return false;
 }
