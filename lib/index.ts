@@ -66,7 +66,9 @@ export type {
   FormDataBase,
   KeyOfFormData,
 } from './form/types';
-export { createTextField } from './form/createTextField';
-export { createTextareaField } from './form/createTextareaField';
-export { createCheckboxField } from './form/createCheckboxField';
-export { createSelectField } from './form/createSelectField';
+export {
+  createTextField,
+  createTextareaField,
+  createSelectField,
+  createCheckboxField,
+} from './form/fieldCreators';

@@ -45,10 +45,6 @@ export interface FormFieldController<
 > {
   name: FormFieldNameT;
   ref: (element: FormControlElement | null) => void;
-  /**
-   * @deprecated we have changed the design to use DOM as the source of
-   * truth.
-   */
   setValue: (value: FormFieldValueT) => void;
   setErrorListener: (listener: FormErrorListener) => void;
 }
