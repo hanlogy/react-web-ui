@@ -53,12 +53,14 @@ export {
   useForm,
   type FormFieldRegister,
   type FormSetFieldValue,
+  type FormSetInitialValues,
 } from './form/useForm';
 
 export type {
   FormFieldController,
   FormDataBase,
   KeyOfFormData,
+  FormFieldValue,
 } from './form/types';
 export {
   createTextField,

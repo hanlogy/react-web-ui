@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import type {
+  DefaultFormData,
   FormControlElement,
   FormDataBase,
   FormErrorListener,
@@ -22,7 +23,9 @@ import { isFormFieldValueChanged } from './helpers';
  * - field value can be `string | boolean | undefined`. `boolean` is for
  *   checkbox `<input>` only.
  */
-export function useForm<FormDataT extends FormDataBase<FormDataT>>() {
+export function useForm<
+  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+>() {
   type FormFieldNameT = KeyOfFormData<FormDataT>;
 
   const initializedRef = useRef<boolean>(false);
@@ -245,11 +248,14 @@ export function useForm<FormDataT extends FormDataBase<FormDataT>>() {
 
 type UseFormReturn<T extends FormDataBase<T>> = ReturnType<typeof useForm<T>>;
 
-export type FormFieldRegister<T extends FormDataBase<T>> =
+export type FormFieldRegister<T extends FormDataBase<T> = DefaultFormData> =
   UseFormReturn<T>['register'];
 
-export type FormSetFieldValue<T extends FormDataBase<T>> =
+export type FormSetFieldValue<T extends FormDataBase<T> = DefaultFormData> =
   UseFormReturn<T>['setFieldValue'];
+
+export type FormSetInitialValues<T extends FormDataBase<T> = DefaultFormData> =
+  UseFormReturn<T>['setInitialValues'];
 
 // DEV NOTE:
 // - The returned functions must be stable, wrap it with `useCallback` if not.

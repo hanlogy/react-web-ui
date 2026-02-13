@@ -4,6 +4,9 @@ export type FormControlElement =
   | HTMLTextAreaElement
   | HTMLSelectElement;
 
+// This default type is very useful when a form is distributed in different
+// files.
+export type DefaultFormData = Record<string, FormFieldValue>;
 export type KeyOfFormData<T extends object> = Extract<keyof T, string>;
 export type FormFieldValue = string | boolean;
 
