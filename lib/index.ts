@@ -51,6 +51,7 @@ export { SelectInput } from './components/inputs/SelectInput';
 // form
 export {
   useForm,
+  type FormManager,
   type FormFieldRegister,
   type FormSetFieldValue,
   type FormSetInitialValues,
@@ -68,3 +69,4 @@ export {
   createSelectField,
   createCheckboxField,
 } from './form/fieldCreators';
+export { HiddenField } from './form/HiddenField';

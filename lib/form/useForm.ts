@@ -302,20 +302,21 @@ export function useForm<
   };
 }
 
-type UseFormReturn<T extends FormDataBase<T>> = ReturnType<typeof useForm<T>>;
+export type FormManager<T extends FormDataBase<T> = DefaultFormData> =
+  ReturnType<typeof useForm<T>>;
 
 export type FormFieldRegister<T extends FormDataBase<T> = DefaultFormData> =
-  UseFormReturn<T>['register'];
+  FormManager<T>['register'];
 
 export type FormSetFieldValue<T extends FormDataBase<T> = DefaultFormData> =
-  UseFormReturn<T>['setFieldValue'];
+  FormManager<T>['setFieldValue'];
 
 export type FormSetInitialValues<T extends FormDataBase<T> = DefaultFormData> =
-  UseFormReturn<T>['setInitialValues'];
+  FormManager<T>['setInitialValues'];
 
 export type FormSetValuesChangeListener<
   T extends FormDataBase<T> = DefaultFormData,
-> = UseFormReturn<T>['setValuesChangeListener'];
+> = FormManager<T>['setValuesChangeListener'];
 
 // DEV NOTE:
 // - Design principle: uncontrolled inputs + DOM as source of truth.
