@@ -56,6 +56,10 @@ export interface FormFieldController<
 // associated with any specific field.
 export type FormErrorListener = (error?: string) => void;
 
+export type ValuesChangeListener<
+  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+> = (current: Partial<FormDataT>, previous: Partial<FormDataT>) => void;
+
 export type FieldStateClassBuilder =
   | string
   | ((opts: { isError: boolean }) => string);

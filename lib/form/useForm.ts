@@ -8,11 +8,12 @@ import type {
   FormFieldRegisterOptions,
   FormFieldsCollectionOptions,
   KeyOfFormData,
+  ValuesChangeListener,
 } from './types';
 import { setControlElementValue } from './setControlElementValue';
 import { getControlElementValue } from './getControlElementValue';
 import { collectValues } from './collectValues';
-import { isFormFieldValueChanged } from './helpers';
+import { isFormValuesChanged, isFormFieldValueChanged } from './helpers';
 
 /**
  * A **non-reactive** form state manager
@@ -59,6 +60,9 @@ export function useForm<
     {},
   );
 
+  const valuesChangeListenerRef =
+    useRef<ValuesChangeListener<FormDataT>>(undefined);
+
   // Only returns the values of the mounted elements when allFields is false.
   const getValues = useCallback(
     (
@@ -98,6 +102,13 @@ export function useForm<
   const setFormErrorListener = useCallback((listener: FormErrorListener) => {
     formErrorRef.current.listener = listener;
   }, []);
+
+  const setValuesChangeListener = useCallback(
+    (listener?: ValuesChangeListener<FormDataT>) => {
+      valuesChangeListenerRef.current = listener;
+    },
+    [],
+  );
 
   const clearErrors = useCallback(() => {
     setFormError(undefined);
@@ -180,22 +191,31 @@ export function useForm<
           element.oninput = () => {
             setFieldError(fieldName, undefined);
             setFormError(undefined);
+            dirtyFieldsRef.current.add(fieldName);
+            const valuesBefore = prevousValuesRef.current;
+            const newValues = getValues({ allFields: true });
 
             const onValueChange = options?.onValueChange;
-            if (onValueChange) {
-              dirtyFieldsRef.current.add(fieldName);
-              const valuesBefore = prevousValuesRef.current;
-              const newValues = getValues({ allFields: true });
-              if (
-                isFormFieldValueChanged(
-                  valuesBefore[fieldName],
-                  newValues[fieldName],
-                )
-              ) {
-                onValueChange(newValues, { field: fieldName, valuesBefore });
-                prevousValuesRef.current = newValues;
-              }
+            if (
+              onValueChange &&
+              isFormFieldValueChanged(
+                valuesBefore[fieldName],
+                newValues[fieldName],
+              )
+            ) {
+              onValueChange(newValues, { field: fieldName, valuesBefore });
             }
+
+            const ValuesChangeListener = valuesChangeListenerRef.current;
+
+            if (
+              ValuesChangeListener &&
+              isFormValuesChanged(valuesBefore, newValues)
+            ) {
+              ValuesChangeListener(newValues, valuesBefore);
+            }
+
+            prevousValuesRef.current = newValues;
           };
 
           registeredElementsRef.current[fieldName] = element;
@@ -241,6 +261,7 @@ export function useForm<
     setFieldError,
     setFormError,
     setFormErrorListener,
+    setValuesChangeListener,
     clearErrors,
     validate,
   };
