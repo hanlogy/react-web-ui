@@ -13,7 +13,7 @@ import type {
 import { setControlElementValue } from './setControlElementValue';
 import { getControlElementValue } from './getControlElementValue';
 import { collectValues } from './collectValues';
-import { isFormFieldValueChanged } from './helpers';
+import { getKeys, isFormFieldValueChanged } from './helpers';
 
 /**
  * A **non-reactive** form state manager
@@ -35,46 +35,46 @@ export function useForm<
   alwaysApplyInitialValues?: boolean;
   emitInitialValuesChange?: boolean;
 } = {}) {
-  type FormFieldNameT = KeyOfFormData<FormDataT>;
+  type FieldName = KeyOfFormData<FormDataT>;
+  type FieldRecord<V> = Partial<Record<FieldName, V>>;
 
   const initializedRef = useRef<boolean>(false);
 
   // null when unmounted
   const registeredElementsRef = useRef<
-    Partial<Record<keyof FormDataT, FormControlElement | null>>
+    Partial<FieldRecord<FormControlElement | null>>
   >({});
 
   const registeredOptionsRef = useRef<
-    Partial<Record<keyof FormDataT, FormFieldRegisterOptions<FormDataT>>>
+    Partial<FieldRecord<FormFieldRegisterOptions<FormDataT>>>
   >({});
 
   // Fields have ever set a valid value.
-  const everSetFieldsRef = useRef<Set<keyof FormDataT>>(new Set());
+  const everSetFieldsRef = useRef<Set<FieldName>>(new Set());
 
   const unattachedValuesRef = useRef<Partial<FormDataT>>({});
 
   // Only for onValueChange
   const valuesSnapshotRef = useRef<Partial<FormDataT>>({});
 
-  const fieldErrorsRef = useRef<
-    Partial<Record<keyof FormDataT, string | undefined>>
-  >({});
+  const fieldErrorsRef = useRef<Partial<FieldRecord<string | undefined>>>({});
 
   const fieldErrorListenersRef = useRef<
-    Partial<Record<keyof FormDataT, FormErrorListener | undefined>>
+    Partial<FieldRecord<FormErrorListener | undefined>>
   >({});
 
   const formErrorRef = useRef<{ listener?: FormErrorListener; error?: string }>(
     {},
   );
 
-  const valuesChangeListenerRef =
-    useRef<FormValueChangeListener<FormDataT>>(undefined);
+  const valuesChangeListenerRef = useRef<
+    FormValueChangeListener<FormDataT> | undefined
+  >(undefined);
 
   // Only returns the values of the mounted elements when allFields is false.
   const getValues = useCallback(
     (
-      options: FormFieldsCollectionOptions<FormFieldNameT> = {},
+      options: FormFieldsCollectionOptions<FieldName> = {},
     ): Partial<FormDataT> => {
       return collectValues(
         registeredElementsRef.current,
@@ -85,7 +85,7 @@ export function useForm<
     [],
   );
 
-  const setFieldError = useCallback((field: FormFieldNameT, error?: string) => {
+  const setFieldError = useCallback((field: FieldName, error?: string) => {
     if (fieldErrorsRef.current[field] === error) {
       return;
     }
@@ -120,13 +120,13 @@ export function useForm<
 
   const clearErrors = useCallback(() => {
     setFormError(undefined);
-    for (const field in fieldErrorsRef.current) {
+    for (const field of getKeys(fieldErrorsRef.current)) {
       setFieldError(field, undefined);
     }
   }, [setFormError, setFieldError]);
 
   const setFieldValue = useCallback(
-    <K extends FormFieldNameT>(
+    <K extends FieldName>(
       name: K,
       value: FormDataT[K],
       {
@@ -186,7 +186,7 @@ export function useForm<
   );
 
   const validate = useCallback(
-    (options: FormFieldsCollectionOptions<FormFieldNameT> = {}): boolean => {
+    (options: FormFieldsCollectionOptions<FieldName> = {}): boolean => {
       let isTrue = true;
       const values = getValues(options);
 
@@ -205,7 +205,7 @@ export function useForm<
   );
 
   const register = useCallback(
-    <K extends FormFieldNameT>(
+    <K extends FieldName>(
       fieldName: K,
       options: FormFieldRegisterOptions<FormDataT> = {},
     ): FormFieldController<FormDataT, K, FormDataT[K]> => {
