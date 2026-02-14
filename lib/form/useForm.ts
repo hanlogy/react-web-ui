@@ -2,7 +2,7 @@ import { useCallback, useLayoutEffect, useRef } from 'react';
 import type {
   DefaultFormData,
   FormControlElement,
-  FormDataBase,
+  FormDataConstraint,
   FormErrorListener,
   FormFieldController,
   FormFieldRegisterOptions,
@@ -25,7 +25,7 @@ import { isFormFieldValueChanged } from './helpers';
  *   checkbox `<input>` only.
  */
 export function useForm<
-  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+  FormDataT extends FormDataConstraint<FormDataT> = DefaultFormData,
 >({
   initialValues,
   alwaysApplyInitialValues = false,
@@ -302,20 +302,23 @@ export function useForm<
   };
 }
 
-export type FormManager<T extends FormDataBase<T> = DefaultFormData> =
+export type FormManager<T extends FormDataConstraint<T> = DefaultFormData> =
   ReturnType<typeof useForm<T>>;
 
-export type FormFieldRegister<T extends FormDataBase<T> = DefaultFormData> =
-  FormManager<T>['register'];
+export type FormFieldRegister<
+  T extends FormDataConstraint<T> = DefaultFormData,
+> = FormManager<T>['register'];
 
-export type FormSetFieldValue<T extends FormDataBase<T> = DefaultFormData> =
-  FormManager<T>['setFieldValue'];
+export type FormSetFieldValue<
+  T extends FormDataConstraint<T> = DefaultFormData,
+> = FormManager<T>['setFieldValue'];
 
-export type FormSetInitialValues<T extends FormDataBase<T> = DefaultFormData> =
-  FormManager<T>['setInitialValues'];
+export type FormSetInitialValues<
+  T extends FormDataConstraint<T> = DefaultFormData,
+> = FormManager<T>['setInitialValues'];
 
 export type FormSetValuesChangeListener<
-  T extends FormDataBase<T> = DefaultFormData,
+  T extends FormDataConstraint<T> = DefaultFormData,
 > = FormManager<T>['setValuesChangeListener'];
 
 // DEV NOTE:

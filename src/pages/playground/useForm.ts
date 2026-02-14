@@ -8,20 +8,20 @@ export type FormErrorListener = (error?: string) => void;
 export type FormFieldValue = string | boolean;
 export type DefaultFormData = Record<string, FormFieldValue>;
 export type KeyOfFormData<T extends object> = Extract<keyof T, string>;
-export type FormDataBase<FormDataT> = {
+export type FormDataConstraint<FormDataT> = {
   [K in keyof FormDataT]: FormFieldValue | undefined;
 };
 export type FormFieldValidator<T> = (
   values: Partial<T>,
 ) => string | undefined | void;
 export type FormFieldRegisterOptions<
-  FormDataT extends FormDataBase<FormDataT>,
+  FormDataT extends FormDataConstraint<FormDataT>,
 > = Readonly<{
   validator?: FormFieldValidator<FormDataT>;
   onValueChange?: FormValueChangeListener<FormDataT>;
 }>;
 export type FormValueChangeListener<
-  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+  FormDataT extends FormDataConstraint<FormDataT> = DefaultFormData,
 > = <K extends KeyOfFormData<FormDataT>>(
   current: Partial<FormDataT>,
   extra: {
@@ -31,7 +31,7 @@ export type FormValueChangeListener<
 ) => void;
 
 export interface FormFieldController<
-  FormDataT extends FormDataBase<FormDataT>,
+  FormDataT extends FormDataConstraint<FormDataT>,
   FormFieldNameT extends KeyOfFormData<FormDataT> = KeyOfFormData<FormDataT>,
   FormFieldValueT extends FormDataT[FormFieldNameT] = FormDataT[FormFieldNameT],
 > {
@@ -44,7 +44,7 @@ export interface FormFieldController<
 //
 
 export function useForm<
-  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+  FormDataT extends FormDataConstraint<FormDataT> = DefaultFormData,
 >() {
   type FormFieldNameT = KeyOfFormData<FormDataT>;
   const register = useCallback(
@@ -71,5 +71,5 @@ export function useForm<
   };
 }
 
-export type FormManager<T extends FormDataBase<T> = DefaultFormData> =
+export type FormManager<T extends FormDataConstraint<T> = DefaultFormData> =
   ReturnType<typeof useForm<T>>;

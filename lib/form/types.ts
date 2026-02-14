@@ -10,12 +10,12 @@ export type DefaultFormData = Record<string, FormFieldValue>;
 export type KeyOfFormData<T extends object> = Extract<keyof T, string>;
 export type FormFieldValue = string | boolean;
 
-export type FormDataBase<FormDataT> = {
+export type FormDataConstraint<FormDataT extends object> = {
   [K in keyof FormDataT]: FormFieldValue | undefined;
 };
 
 export type FormValueChangeListener<
-  FormDataT extends FormDataBase<FormDataT> = DefaultFormData,
+  FormDataT extends FormDataConstraint<FormDataT> = DefaultFormData,
 > = <K extends KeyOfFormData<FormDataT>>(
   current: Partial<FormDataT>,
   extra: {
@@ -33,7 +33,7 @@ export type FormFieldValidator<T> = (
 ) => string | undefined | void;
 
 export type FormFieldRegisterOptions<
-  FormDataT extends FormDataBase<FormDataT>,
+  FormDataT extends FormDataConstraint<FormDataT>,
 > = Readonly<{
   validator?: FormFieldValidator<FormDataT>;
   onValueChange?: FormValueChangeListener<FormDataT>;
@@ -42,7 +42,7 @@ export type FormFieldRegisterOptions<
 // We must have all the three generic types, in order to build up the inference
 // when `register`.
 export interface FormFieldController<
-  FormDataT extends FormDataBase<FormDataT>,
+  FormDataT extends FormDataConstraint<FormDataT>,
   FormFieldNameT extends KeyOfFormData<FormDataT> = KeyOfFormData<FormDataT>,
   FormFieldValueT extends FormDataT[FormFieldNameT] = FormDataT[FormFieldNameT],
 > {

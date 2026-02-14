@@ -1,13 +1,13 @@
 import type { ComponentProps } from 'react';
 import type {
-  FormDataBase,
+  FormDataConstraint,
   FormFieldController,
   InputPropsForForm,
   KeyOfFormData,
 } from './types';
 
 export function HiddenField<
-  FormDataT extends FormDataBase<FormDataT>,
+  FormDataT extends FormDataConstraint<FormDataT>,
   FormFieldNameT extends KeyOfFormData<FormDataT>,
   FormFieldValueT extends FormDataT[FormFieldNameT],
 >({

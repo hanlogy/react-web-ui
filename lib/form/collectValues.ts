@@ -1,7 +1,7 @@
 import { getControlElementValue } from './getControlElementValue';
 import type {
   FormControlElement,
-  FormDataBase,
+  FormDataConstraint,
   FormFieldsCollectionOptions,
   KeyOfFormData,
 } from './types';
@@ -9,7 +9,7 @@ import type {
 // TODO: Optimise type safe. A lot of type casting now.
 // But it is an internal helper for useForm, it is safe.
 export function collectValues<
-  FormDataT extends FormDataBase<FormDataT>,
+  FormDataT extends FormDataConstraint<FormDataT>,
   FormFieldNameT extends KeyOfFormData<FormDataT>,
 >(
   elements: Partial<Record<FormFieldNameT, FormControlElement | null>>,

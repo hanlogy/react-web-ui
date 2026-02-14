@@ -59,7 +59,7 @@ export {
 
 export type {
   FormFieldController,
-  FormDataBase,
+  FormDataConstraint,
   KeyOfFormData,
   FormFieldValue,
 } from './form/types';
