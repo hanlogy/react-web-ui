@@ -20,3 +20,11 @@ export function isFormFieldValueChanged(
 
   return !!A !== !!B;
 }
+
+/**
+ * A type-safe version of Object.keys
+ */
+// TODO: Move to ts-lib
+export function getKeys<T extends object>(object: T): Array<keyof T> {
+  return Object.keys(object) as Array<keyof T>;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ComponentType, type ReactNode } from 'react';
 import type {
-  FormDataBase,
+  FormDataConstraint,
   FormElementsClassNameBuilders,
   FormFieldController,
   InputPropsForForm,
@@ -31,7 +31,7 @@ export function withFieldWrapper<T extends object>(
   } = {},
 ) {
   return <
-    FormDataT extends FormDataBase<FormDataT>,
+    FormDataT extends FormDataConstraint<FormDataT>,
     FormFieldNameT extends KeyOfFormData<FormDataT>,
     FormFieldValueT extends FormDataT[FormFieldNameT],
   >({
