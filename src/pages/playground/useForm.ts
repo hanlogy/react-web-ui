@@ -6,7 +6,7 @@ export type FormControlElement =
 export type FormErrorListener = (error?: string) => void;
 
 export type FormFieldValue = string | boolean;
-export type DefaultFormData = Record<string, FormFieldValue>;
+export type DefaultFormData = Record<string, FormFieldValue | undefined>;
 export type KeyOfFormData<T extends object> = Extract<keyof T, string>;
 export type FormDataConstraint<FormDataT> = {
   [K in keyof FormDataT]: FormFieldValue | undefined;
