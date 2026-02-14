@@ -16,14 +16,11 @@ export type FormDataConstraint<FormDataT extends object> = {
 
 export type FormValueChangeListener<
   FormDataT extends FormDataConstraint<FormDataT> = DefaultFormData,
-> = (
+> = <K extends KeyOfFormData<FormDataT>>(
   current: Partial<FormDataT>,
   extra: {
-    // NOTE: Do not narrow to a specific key:
-    // <K extends KeyOfFormData<FormDataT>>
-    // It does not add any benefit in practice, it might make `useForm` less
-    // flexible?
-    field: KeyOfFormData<FormDataT>;
+    // NOTE: We must make field type specific with generic K, see (1)
+    field: K;
     valuesBefore: Partial<FormDataT>;
   },
 ) => void;
@@ -44,7 +41,8 @@ export type FormFieldRegisterOptions<
 }>;
 
 // We must have all the three generic types, in order to build up the inference
-// when `register`.
+// when `register`. see (1).
+// FormFieldValueT is redundant by default until FormFieldNameT is specific.
 export interface FormFieldController<
   FormDataT extends FormDataConstraint<FormDataT>,
   FormFieldNameT extends KeyOfFormData<FormDataT> = KeyOfFormData<FormDataT>,
@@ -77,3 +75,25 @@ export type InputPropsForForm<T> = Omit<
   // reset.
   'name' | 'onChange' | 'onInput' | 'ref' | 'className' | 'value' | 'checked'
 >;
+
+// (1)
+// When try to use wider type for field or remove the redundant generic value
+// type, check this:
+// Component A
+// const { register } = useForm<{
+//   name: string;
+//   description: string;
+// }>();
+// <ChildForm register={register} />
+//
+// Component B
+// export function ChildForm({
+//   register,
+// }: {
+//   register: FormFieldRegister<{
+//     description: string;
+//   }>;
+// }) {
+//   register('description');
+//   return null;
+// }
