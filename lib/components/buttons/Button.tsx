@@ -51,11 +51,12 @@ export function Button({
       type={type}
       disabled={disabled}
       className={clsx(
-        'cursor-pointer items-center transition focus:outline-none',
+        'items-center transition focus:outline-none',
         buttonClassNameMap[size],
         className,
         isInline ? 'inline-flex' : 'flex',
         {
+          'cursor-pointer': !disabled,
           'rounded-full': isRounded,
           [buttonSpaceMap[size]]: !removeSpace,
           'justify-center': isCenter,
