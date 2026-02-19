@@ -12,8 +12,9 @@ export function HiddenField<
   FormFieldValueT extends FormDataT[FormFieldNameT],
 >({
   controller: { ref, name },
+  ...rest
 }: {
   controller: FormFieldController<FormDataT, FormFieldNameT, FormFieldValueT>;
 } & InputPropsForForm<Omit<ComponentProps<'input'>, 'type'>>) {
-  return <input name={name} ref={ref} type="hidden" />;
+  return <input {...rest} name={name} ref={ref} type="hidden" />;
 }

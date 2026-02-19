@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -38,14 +39,33 @@ export default defineConfig({
         entryFileNames: '[name].js',
         // https://rollupjs.org/configuration-options/#output-banner-output-footer
         banner: (chunk) => {
-          const hasUseClient = Object.keys(chunk.modules).some((id) => {
-            const code = chunk.modules[id].code;
-            return (
-              code?.includes('"use client"') || code?.includes("'use client'")
-            );
-          });
+          const facadeModuleId = chunk.facadeModuleId;
+          if (!facadeModuleId) {
+            return '';
+          }
 
-          return hasUseClient ? '"use client";\n' : '';
+          // NOTE:
+          // There might be better ways for example create a custom plugin, or
+          // even there is a built-in way to preserve directives. Will do more
+          // research later.
+          const code = fs.readFileSync(facadeModuleId, 'utf8');
+          const firstLine = code.trim().split('\n', 1)[0];
+          if (!firstLine) {
+            return '';
+          }
+
+          const directives = ['use client'];
+
+          for (const directive of directives) {
+            if (
+              firstLine.includes(`"${directive}"`) ||
+              firstLine.includes(`'${directive}'`)
+            ) {
+              return `'${directive}'\n`;
+            }
+          }
+
+          return '';
         },
       },
     },
