@@ -274,6 +274,33 @@ export function useForm<
           setFieldValue(fieldName, value);
         },
 
+        reset: () => {
+          const element = registeredElementsRef.current[fieldName];
+          if (!element) {
+            return;
+          }
+          if (element instanceof HTMLInputElement) {
+            if (element.type === 'checkbox') {
+              element.checked = element.defaultChecked;
+            } else {
+              element.value = element.defaultValue;
+            }
+          } else if (element instanceof HTMLSelectElement) {
+            const options = element.options;
+            let optionIndex = -1;
+
+            for (let i = 0; i < options.length; i++) {
+              if (options[i].defaultSelected) {
+                optionIndex = i;
+                break;
+              }
+            }
+
+            // fallback if none had selected=""
+            element.selectedIndex = optionIndex >= 0 ? optionIndex : 0;
+          }
+        },
+
         setErrorListener: (listener?: FormErrorListener) => {
           fieldErrorListenersRef.current[fieldName] = listener;
         },
@@ -299,6 +326,7 @@ export function useForm<
     setValuesChangeListener,
     clearErrors,
     validate,
+    // TODO: Add a resetField method
   };
 }
 
