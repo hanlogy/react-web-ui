@@ -50,6 +50,7 @@ export interface FormFieldController<
 > {
   name: FormFieldNameT;
   ref: (element: FormControlElement | null) => void | (() => void);
+  reset: () => void;
   setValue: (value: FormFieldValueT) => void;
   setErrorListener: (listener?: FormErrorListener) => void;
 }
