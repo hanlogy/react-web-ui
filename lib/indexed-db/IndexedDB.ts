@@ -2,11 +2,14 @@ import { requestToPromise, transactionDone } from './helpers';
 import type { ObjectStoreSchemas, DBSchema } from './types';
 
 export class IndexedDB<SchemaT extends DBSchema<SchemaT>> {
-  private constructor(db: IDBDatabase) {
+  private constructor(db: IDBDatabase, onVersionChange?: () => void) {
     this.db = db;
 
     // Close cleanly if another tab upgrades the DB
-    this.db.onversionchange = () => this.db.close();
+    this.db.onversionchange = () => {
+      this.db.close();
+      onVersionChange?.();
+    };
   }
 
   private db: IDBDatabase;
@@ -17,6 +20,7 @@ export class IndexedDB<SchemaT extends DBSchema<SchemaT>> {
     stores,
     onBlocked,
     onUpgrade,
+    onVersionChange,
   }: {
     name: string;
     version: number;
@@ -28,6 +32,7 @@ export class IndexedDB<SchemaT extends DBSchema<SchemaT>> {
       oldVersion: number;
       newVersion: number | null;
     }) => void;
+    onVersionChange?: () => void;
   }): Promise<IndexedDB<SchemaT>> {
     const request = indexedDB.open(name, version);
 
@@ -70,7 +75,10 @@ export class IndexedDB<SchemaT extends DBSchema<SchemaT>> {
 
     request.onblocked = () => onBlocked?.();
 
-    return new IndexedDB<SchemaT>(await requestToPromise(request));
+    return new IndexedDB<SchemaT>(
+      await requestToPromise(request),
+      onVersionChange,
+    );
   }
 
   close() {

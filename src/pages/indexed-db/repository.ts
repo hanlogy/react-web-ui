@@ -26,15 +26,21 @@ const stores: ObjectStoreSchemas<MyDBSchema> = {
   },
 };
 
-export const openDB = () =>
-  (dbPromise ??= IndexedDB.open<MyDBSchema>({
+export function openDB() {
+  return (dbPromise ??= IndexedDB.open<MyDBSchema>({
     name: 'ExampleDB',
     version: 1,
     stores,
-    onBlocked: () =>
-      console.warn('ExampleDB open/upgrade blocked by another tab.'),
+    onBlocked: () => {
+      console.warn('ExampleDB open/upgrade blocked by another tab.');
+    },
+    onVersionChange: () => {
+      // current connection got closed due to another tab upgrading
+      dbPromise = null;
+    },
   }).catch((e) => {
     // allow retry after failure
     dbPromise = null;
     throw e;
   }));
+}
