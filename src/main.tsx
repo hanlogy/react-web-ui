@@ -12,6 +12,7 @@ import { DialogsPage } from './pages/dialogs/DialogsPage';
 import { InputsPage } from './pages/inputs/InputsPage';
 import { FormPage } from './pages/form/FormPage';
 import { PlaygroundPage } from './pages/playground/PlaygroundPage';
+import { IndexedDBPage } from './pages/indexed-db/IndexedDBPage';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -26,6 +27,7 @@ createRoot(document.getElementById('root')!).render(
           <Route path="/dialogs" element={<DialogsPage />} />
           <Route path="/form" element={<FormPage />} />
           <Route path="/inputs" element={<InputsPage />} />
+          <Route path="/indexed-db" element={<IndexedDBPage />} />
           <Route path="/playground" element={<PlaygroundPage />} />
         </Route>
       </Routes>

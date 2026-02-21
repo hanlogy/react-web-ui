@@ -70,3 +70,7 @@ export {
   createCheckboxField,
 } from './form/fieldCreators';
 export { HiddenField } from './form/HiddenField';
+
+// IndexedDB
+export { IndexedDB } from './indexed-db/IndexedDB';
+export type { ObjectStoreSchemas } from './indexed-db/types';

@@ -9,6 +9,7 @@ const pages = [
   { path: '/collapsible-tree', label: 'Collapsible Tree' },
   { path: '/dropdowns', label: 'Dropdowns' },
   { path: '/dialogs', label: 'Dialogs' },
+  { path: '/indexed-db', label: 'IndexedDB' },
   { path: '/playground', label: 'Playground' },
 ] as const;
 
