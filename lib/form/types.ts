@@ -35,9 +35,11 @@ export type FormFieldValidator<T> = (
 
 export type FormFieldRegisterOptions<
   FormDataT extends FormDataConstraint<FormDataT>,
+  K extends keyof FormDataT,
 > = Readonly<{
   validator?: FormFieldValidator<FormDataT>;
   onValueChange?: FormValueChangeListener<FormDataT>;
+  transform?: (value?: FormDataT[K] | undefined) => FormDataT[K] | undefined;
 }>;
 
 // We must have all the three generic types, in order to build up the inference

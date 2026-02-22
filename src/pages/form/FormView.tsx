@@ -88,7 +88,11 @@ export function FormView() {
             <TextareaField
               label="Description"
               helper="Enter some text"
-              controller={register('description', {})}
+              controller={register('description', {
+                transform: (description) => {
+                  return description + 'foo';
+                },
+              })}
             />
           </div>
           <div>
