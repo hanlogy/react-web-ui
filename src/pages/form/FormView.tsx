@@ -93,10 +93,10 @@ export function FormView() {
           </div>
           <div>
             <SelectField
+              isOptional
               label="Level"
               helper="Select a skill level"
               options={[
-                { value: '', label: '' },
                 { value: '1', label: 'Level 1' },
                 { value: '2', label: 'Level 2' },
                 { value: '3', label: 'Level 3' },
