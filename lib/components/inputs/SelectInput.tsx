@@ -11,9 +11,12 @@ export function SelectInput({
   className,
   icon,
   options,
+  isOptional = false,
   defaultValue,
   ...rest
 }: SelectInputProps) {
+  options = isOptional ? [{ label: '', value: '' }, ...options] : options;
+
   const resolvedDefaultValue = options.some(
     (e) => e.value === String(defaultValue),
   )

@@ -46,7 +46,9 @@ export function useForm<
   >({});
 
   const registeredOptionsRef = useRef<
-    Partial<FieldRecord<FormFieldRegisterOptions<FormDataT>>>
+    Partial<{
+      [K in FieldName]: FormFieldRegisterOptions<FormDataT, K>;
+    }>
   >({});
 
   // Fields have ever set a valid value.
@@ -76,11 +78,23 @@ export function useForm<
     (
       options: FormFieldsCollectionOptions<FieldName> = {},
     ): Partial<FormDataT> => {
-      return collectValues(
+      const values = collectValues(
         registeredElementsRef.current,
         unattachedValuesRef.current,
         options,
       );
+
+      const transformed: Partial<FormDataT> = {};
+
+      for (const fieldName in values) {
+        const fieldValue = values[fieldName];
+        const transformer = registeredOptionsRef.current[fieldName]?.transform;
+        transformed[fieldName] = transformer
+          ? transformer(fieldValue)
+          : fieldValue;
+      }
+
+      return transformed;
     },
     [],
   );
@@ -207,7 +221,7 @@ export function useForm<
   const register = useCallback(
     <K extends FieldName>(
       fieldName: K,
-      options: FormFieldRegisterOptions<FormDataT> = {},
+      options: FormFieldRegisterOptions<FormDataT, K> = {},
     ): FormFieldController<FormDataT, K, FormDataT[K]> => {
       registeredOptionsRef.current[fieldName] = options;
 

@@ -88,15 +88,19 @@ export function FormView() {
             <TextareaField
               label="Description"
               helper="Enter some text"
-              controller={register('description', {})}
+              controller={register('description', {
+                transform: (description) => {
+                  return description + 'foo';
+                },
+              })}
             />
           </div>
           <div>
             <SelectField
+              isOptional
               label="Level"
               helper="Select a skill level"
               options={[
-                { value: '', label: '' },
                 { value: '1', label: 'Level 1' },
                 { value: '2', label: 'Level 2' },
                 { value: '3', label: 'Level 3' },

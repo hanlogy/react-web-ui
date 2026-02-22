@@ -22,4 +22,5 @@ export type SelectInputProps = Omit<
 > & {
   icon?: ReactNode | undefined;
   options: readonly Readonly<{ value: string; label: string }>[];
+  isOptional?: boolean;
 };
