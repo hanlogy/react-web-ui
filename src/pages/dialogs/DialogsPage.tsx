@@ -23,9 +23,13 @@ function DialogPageView() {
       <button
         className="focus:outline-none"
         onClick={() => {
-          openDialog(({ closeDialog }) => (
-            <InfoDialog closeDialog={closeDialog} />
-          ));
+          openDialog(
+            ({ closeDialog }) => <InfoDialog closeDialog={closeDialog} />,
+            {
+              closeOnBackdropClick: false,
+              closeOnEscape: false,
+            },
+          );
         }}
       >
         Show a dialog
