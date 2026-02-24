@@ -13,5 +13,11 @@ export type DiaglogReturnType<T> = Promise<T | undefined>;
 export interface DialogContextValue {
   readonly openDialog: <T>(
     contentBuilder: DialogContentBuilder<T>,
+    options?: OpenDialogOptions,
   ) => DiaglogReturnType<T>;
 }
+
+export type OpenDialogOptions = {
+  closeOnBackdropClick?: boolean;
+  closeOnEscape?: boolean;
+};
