@@ -14,6 +14,7 @@ import { setControlElementValue } from './setControlElementValue';
 import { getControlElementValue } from './getControlElementValue';
 import { collectValues } from './collectValues';
 import { getKeys, isFormFieldValueChanged } from './helpers';
+import { resetControlElementToDefault } from './resetControlElementToDefault';
 
 /**
  * A **non-reactive** form state manager
@@ -31,8 +32,17 @@ export function useForm<
   alwaysApplyInitialValues = false,
   emitInitialValuesChange = false,
 }: {
+  /**
+   * @deprecated set default value on fields directly
+   */
   initialValues?: Partial<FormDataT>;
+  /**
+   * @deprecated set default value on fields directly
+   */
   alwaysApplyInitialValues?: boolean;
+  /**
+   * @deprecated set default value on fields directly
+   */
   emitInitialValuesChange?: boolean;
 } = {}) {
   type FieldName = KeyOfFormData<FormDataT>;
@@ -199,6 +209,16 @@ export function useForm<
     [setFieldValue, alwaysApplyInitialValues, emitInitialValuesChange],
   );
 
+  // TODO: Optimize it when removing setInitialValues
+  // NOTE: This method might be identical with `setInitialValues` but with
+  // different meaning.
+  const setValues = useCallback(
+    (data: Partial<FormDataT>) => {
+      setInitialValues(data);
+    },
+    [setInitialValues],
+  );
+
   const validate = useCallback(
     (options: FormFieldsCollectionOptions<FieldName> = {}): boolean => {
       let isTrue = true;
@@ -288,31 +308,22 @@ export function useForm<
           setFieldValue(fieldName, value);
         },
 
+        // TODO: more test
         reset: () => {
           const element = registeredElementsRef.current[fieldName];
           if (!element) {
             return;
           }
-          if (element instanceof HTMLInputElement) {
-            if (element.type === 'checkbox') {
-              element.checked = element.defaultChecked;
-            } else {
-              element.value = element.defaultValue;
-            }
-          } else if (element instanceof HTMLSelectElement) {
-            const options = element.options;
-            let optionIndex = -1;
 
-            for (let i = 0; i < options.length; i++) {
-              if (options[i].defaultSelected) {
-                optionIndex = i;
-                break;
-              }
-            }
-
-            // fallback if none had selected=""
-            element.selectedIndex = optionIndex >= 0 ? optionIndex : 0;
-          }
+          resetControlElementToDefault(element);
+          unattachedValuesRef.current[fieldName] = undefined;
+          everSetFieldsRef.current.delete(fieldName);
+          setFieldError(fieldName, undefined);
+          setFormError(undefined);
+          valuesSnapshotRef.current = {
+            ...valuesSnapshotRef.current,
+            [fieldName]: getControlElementValue(element) as FormDataT[K],
+          };
         },
 
         setErrorListener: (listener?: FormErrorListener) => {
@@ -322,6 +333,29 @@ export function useForm<
     },
     [setFieldValue, setFieldError, setFormError, getValues],
   );
+
+  // reset all fields
+  // TODO: more test
+  const reset = useCallback(() => {
+    for (const fieldName of getKeys(registeredElementsRef.current)) {
+      const element = registeredElementsRef.current[fieldName];
+      if (!element) {
+        continue;
+      }
+
+      resetControlElementToDefault(element);
+    }
+
+    unattachedValuesRef.current = {};
+    everSetFieldsRef.current.clear();
+
+    setFormError(undefined);
+    for (const field of getKeys(fieldErrorsRef.current)) {
+      setFieldError(field, undefined);
+    }
+
+    valuesSnapshotRef.current = getValues({ allFields: true });
+  }, [getValues, setFieldError, setFormError]);
 
   useLayoutEffect(() => {
     if (initialValues) {
@@ -333,14 +367,21 @@ export function useForm<
     getValues,
     register,
     setFieldValue,
+    /**
+     * @deprecated Set default values on fields directly. \
+     * Having APIs to set initial values introduces confusing when also allowing
+     * to set default value on DOM directly.
+     *
+     */
     setInitialValues,
+    setValues,
     setFieldError,
     setFormError,
     setFormErrorListener,
     setValuesChangeListener,
     clearErrors,
     validate,
-    // TODO: Add a resetField method
+    reset,
   };
 }
 
