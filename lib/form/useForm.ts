@@ -15,6 +15,7 @@ import { getControlElementValue } from './getControlElementValue';
 import { collectValues } from './collectValues';
 import { getKeys, isFormFieldValueChanged } from './helpers';
 import { resetControlElementToDefault } from './resetControlElementToDefault';
+import { getDefaultValue } from './getDefaultValue';
 
 /**
  * A **non-reactive** form state manager
@@ -282,6 +283,15 @@ export function useForm<
           };
 
           registeredElementsRef.current[fieldName] = element;
+
+          // TODO: Typesafe
+          let defaultValue: FormDataT[K] | undefined = getDefaultValue(
+            element,
+          ) as FormDataT[K];
+          if (options.transform) {
+            defaultValue = options.transform(defaultValue);
+          }
+          valuesSnapshotRef.current[fieldName] = defaultValue;
 
           const unattachedValue = unattachedValuesRef.current[fieldName];
 
