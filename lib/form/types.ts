@@ -65,7 +65,7 @@ export type FieldStateClassBuilder =
   | string
   | ((opts: { isError: boolean }) => string);
 
-export interface FormElementsClassNameBuilders {
+export interface FieldClassNameBuilders {
   inputClass?: FieldStateClassBuilder;
   labelClass?: FieldStateClassBuilder;
   helperClass?: FieldStateClassBuilder;

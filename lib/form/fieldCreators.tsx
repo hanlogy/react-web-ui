@@ -2,31 +2,46 @@ import { CheckboxInput } from '../components/inputs/CheckboxInput';
 import { SelectInput } from '../components/inputs/SelectInput';
 import { TextareaInput } from '../components/inputs/TextareaInput';
 import { TextInput } from '../components/inputs/TextInput';
-import type { FormElementsClassNameBuilders } from './types';
-import { withFieldWrapper } from './withFieldWrapper';
+import type {
+  CheckboxInputProps,
+  SelectInputProps,
+  TextareaInputProps,
+  TextInputProps,
+} from '../components/inputs/types';
+import { createFormField } from './createFormField';
+import type { FieldClassNameBuilders } from './types';
 
 export function createTextField(
-  classNameBuilders: FormElementsClassNameBuilders = {},
+  classNameBuilders: FieldClassNameBuilders = {},
 ) {
-  return withFieldWrapper(TextInput, classNameBuilders);
+  return createFormField<TextInputProps>((props) => {
+    return <TextInput {...props} />;
+  }, classNameBuilders);
 }
 
 export function createTextareaField(
-  classNameBuilders: FormElementsClassNameBuilders = {},
+  classNameBuilders: FieldClassNameBuilders = {},
 ) {
-  return withFieldWrapper(TextareaInput, classNameBuilders);
+  return createFormField<TextareaInputProps>((props) => {
+    return <TextareaInput {...props} />;
+  }, classNameBuilders);
 }
 
 export function createSelectField(
-  classNameBuilders: FormElementsClassNameBuilders = {},
+  classNameBuilders: FieldClassNameBuilders = {},
 ) {
-  return withFieldWrapper(SelectInput, classNameBuilders);
+  return createFormField<SelectInputProps>((props) => {
+    return <SelectInput {...props} />;
+  }, classNameBuilders);
 }
 
 export function createCheckboxField(
-  classNameBuilders: Omit<FormElementsClassNameBuilders, 'inputClass'> = {},
+  classNameBuilders: Omit<FieldClassNameBuilders, 'inputClass'> = {},
 ) {
-  return withFieldWrapper(CheckboxInput, classNameBuilders, {
-    isCheckbox: true,
-  });
+  return createFormField<CheckboxInputProps>(
+    (props) => {
+      return <CheckboxInput {...props} />;
+    },
+    { ...classNameBuilders, isCheckbox: true },
+  );
 }
