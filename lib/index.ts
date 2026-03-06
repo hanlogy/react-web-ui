@@ -47,6 +47,12 @@ export { TextInput } from './components/inputs/TextInput';
 export { TextareaInput } from './components/inputs/TextareaInput';
 export { CheckboxInput } from './components/inputs/CheckboxInput';
 export { SelectInput } from './components/inputs/SelectInput';
+export type {
+  TextInputProps,
+  TextareaInputProps,
+  CheckboxInputProps,
+  SelectInputProps,
+} from './components/inputs/types';
 
 // form
 export {
@@ -63,12 +69,16 @@ export type {
   KeyOfFormData,
   FormFieldValue,
 } from './form/types';
+
 export {
   createTextField,
   createTextareaField,
   createSelectField,
   createCheckboxField,
 } from './form/fieldCreators';
+
+export { createFormField } from './form/createFormField';
+
 export { HiddenField } from './form/HiddenField';
 
 // IndexedDB

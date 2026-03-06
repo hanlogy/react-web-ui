@@ -1,7 +1,7 @@
-import { useEffect, useState, type ComponentType, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type {
   FormDataConstraint,
-  FormElementsClassNameBuilders,
+  FieldClassNameBuilders,
   FormFieldController,
   InputPropsForForm,
   KeyOfFormData,
@@ -16,17 +16,15 @@ import { clsx } from '../helpers/clsx';
 
 // It is mostly align with M3 design, but still keep some of our design
 // pholosipy
-export function withFieldWrapper<T extends object>(
-  Component: ComponentType<T>,
+export function createFormField<T extends object>(
+  inputRender: (props: T) => ReactNode,
   {
     inputClass,
     labelClass,
     helperClass,
     errorClass,
-  }: FormElementsClassNameBuilders = {},
-  {
-    isCheckbox = false,
-  }: {
+    isCheckbox,
+  }: FieldClassNameBuilders & {
     isCheckbox?: boolean;
   } = {},
 ) {
@@ -51,8 +49,20 @@ export function withFieldWrapper<T extends object>(
       setErrorListener?.(setError);
     }, [setErrorListener]);
 
+    // We need a cast here because TypeScript cannot infer the final spread
+    // object as T.
+    const inputProps = {
+      name,
+      ref,
+      className: resolveFieldStateClass(isCheckbox ? labelClass : inputClass, {
+        isError,
+      }),
+      ...(isCheckbox ? { label } : {}),
+      ...rest,
+    } as T;
+
     return (
-      <div>
+      <div data-role="formField">
         {label && !isCheckbox && (
           <InputLabel
             className={resolveFieldStateClass(labelClass, { isError })}
@@ -61,18 +71,7 @@ export function withFieldWrapper<T extends object>(
           </InputLabel>
         )}
 
-        <Component
-          {...({
-            name,
-            ref,
-            className: resolveFieldStateClass(
-              isCheckbox ? labelClass : inputClass,
-              { isError },
-            ),
-            ...(isCheckbox ? { label } : {}),
-            ...rest,
-          } as T)}
-        />
+        {inputRender(inputProps)}
 
         {helper && (
           <InputHelper
