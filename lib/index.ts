@@ -68,6 +68,7 @@ export type {
   FormDataConstraint,
   KeyOfFormData,
   FormFieldValue,
+  FormErrorListener,
 } from './form/types';
 
 export {
