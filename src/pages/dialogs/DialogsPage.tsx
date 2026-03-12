@@ -28,6 +28,7 @@ function DialogPageView() {
             {
               closeOnBackdropClick: false,
               closeOnEscape: false,
+              withPaddingWhen: 'small',
             },
           );
         }}
@@ -51,7 +52,7 @@ function InfoDialog({ closeDialog }: { closeDialog: CloseDialogFn }) {
           <button onClick={() => closeDialog()}>Close</button>
         </DialogActionBar>
       }
-      className="rounded-[1.75rem] bg-gray-200 shadow-white/40 shadow-lg max-w-md"
+      className="sm:rounded-[1.75rem] bg-gray-200 shadow-white/40 shadow-lg h-full w-full sm:max-w-md sm:h-auto"
     >
       <div className="text-gray-600">
         Lorem Ipsum is simply dummy text of the printing and typesetting
