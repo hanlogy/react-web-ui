@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import type { WithPaddingWhen } from './DialogBackdrop';
 
 export type CloseDialogFn<T = unknown> = (value?: T) => void;
 
@@ -20,4 +21,5 @@ export interface DialogContextValue {
 export type OpenDialogOptions = {
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
+  withPaddingWhen?: WithPaddingWhen;
 };

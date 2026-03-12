@@ -19,10 +19,9 @@ import { DialogBackdrop } from './DialogBackdrop';
 export function DialogProvider({ children }: PropsWithChildren) {
   const [dialog, setDialog] = useState<ReactNode | null>(null);
   const [showOverlay, setShowOverlay] = useState(false);
-  const openDialogOptionsRef = useRef<OpenDialogOptions>({
-    closeOnBackdropClick: true,
-    closeOnEscape: true,
-  });
+  const [openDialogOptions, setOpenDialogOptions] = useState<OpenDialogOptions>(
+    {},
+  );
   const resolverRef = useRef<((value: unknown) => void) | null>(null);
 
   useEffect(() => {
@@ -45,7 +44,7 @@ export function DialogProvider({ children }: PropsWithChildren) {
       contentBuilder: DialogContentBuilder<T>,
       options: OpenDialogOptions = {},
     ): DiaglogReturnType<T> => {
-      openDialogOptionsRef.current = options;
+      setOpenDialogOptions(options);
       setDialog(contentBuilder({ closeDialog }));
 
       return new Promise<T | undefined>((r) => {
@@ -56,7 +55,7 @@ export function DialogProvider({ children }: PropsWithChildren) {
   );
 
   useEffect(() => {
-    const { closeOnEscape } = openDialogOptionsRef.current;
+    const { closeOnEscape } = openDialogOptions;
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && closeOnEscape !== false) {
         closeDialog();
@@ -70,7 +69,7 @@ export function DialogProvider({ children }: PropsWithChildren) {
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [dialog, closeDialog]);
+  }, [dialog, closeDialog, openDialogOptions]);
 
   return (
     <DialogContext value={{ openDialog }}>
@@ -78,8 +77,9 @@ export function DialogProvider({ children }: PropsWithChildren) {
       {dialog && (
         <DialogBackdrop
           showOverlay={showOverlay}
+          withPaddingWhen={openDialogOptions.withPaddingWhen}
           onClick={() => {
-            if (openDialogOptionsRef.current.closeOnBackdropClick !== false) {
+            if (openDialogOptions.closeOnBackdropClick !== false) {
               closeDialog();
             }
           }}
