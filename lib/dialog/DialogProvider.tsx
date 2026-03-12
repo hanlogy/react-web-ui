@@ -19,12 +19,10 @@ import { DialogBackdrop } from './DialogBackdrop';
 export function DialogProvider({ children }: PropsWithChildren) {
   const [dialog, setDialog] = useState<ReactNode | null>(null);
   const [showOverlay, setShowOverlay] = useState(false);
-  const [openDialogOptions, setOpenDialogOptions] = useState<OpenDialogOptions>(
-    {
-      closeOnBackdropClick: true,
-      closeOnEscape: true,
-    },
-  );
+  const openDialogOptionsRef = useRef<OpenDialogOptions>({
+    closeOnBackdropClick: true,
+    closeOnEscape: true,
+  });
   const resolverRef = useRef<((value: unknown) => void) | null>(null);
 
   useEffect(() => {
@@ -45,12 +43,9 @@ export function DialogProvider({ children }: PropsWithChildren) {
   const openDialog = useCallback(
     async <T,>(
       contentBuilder: DialogContentBuilder<T>,
-      {
-        closeOnBackdropClick = true,
-        closeOnEscape = true,
-      }: OpenDialogOptions = {},
+      options: OpenDialogOptions = {},
     ): DiaglogReturnType<T> => {
-      setOpenDialogOptions({ closeOnBackdropClick, closeOnEscape });
+      openDialogOptionsRef.current = options;
       setDialog(contentBuilder({ closeDialog }));
 
       return new Promise<T | undefined>((r) => {
@@ -61,8 +56,9 @@ export function DialogProvider({ children }: PropsWithChildren) {
   );
 
   useEffect(() => {
+    const { closeOnEscape } = openDialogOptionsRef.current;
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && openDialogOptions.closeOnEscape) {
+      if (e.key === 'Escape' && closeOnEscape !== false) {
         closeDialog();
       }
     };
@@ -74,7 +70,7 @@ export function DialogProvider({ children }: PropsWithChildren) {
     return () => {
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [dialog, closeDialog, openDialogOptions]);
+  }, [dialog, closeDialog]);
 
   return (
     <DialogContext value={{ openDialog }}>
@@ -82,11 +78,11 @@ export function DialogProvider({ children }: PropsWithChildren) {
       {dialog && (
         <DialogBackdrop
           showOverlay={showOverlay}
-          onClick={
-            openDialogOptions.closeOnBackdropClick
-              ? () => closeDialog()
-              : undefined
-          }
+          onClick={() => {
+            if (openDialogOptionsRef.current.closeOnBackdropClick !== false) {
+              closeDialog();
+            }
+          }}
         >
           <div onClick={(e) => e.stopPropagation()} className="contents">
             {dialog}
